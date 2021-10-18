@@ -6,17 +6,24 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "upload": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js && rm data/upload.js && rm data/globals.js"
   },
   "dependencies": {
+    "gsap": "^3.8.0",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "sass": "^1.43.2"
   },
   "devDependencies": {
+    "@google-cloud/storage": "^5.15.3",
     "@types/react": "17.0.27",
+    "@types/sharp": "^0.29.2",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
+    "fs": "0.0.1-security",
+    "sharp": "^0.29.1",
     "typescript": "4.4.3"
   }
 }
