@@ -27,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="preload" href="/Gotham-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </Head>
 
       <Component {...pageProps} />
