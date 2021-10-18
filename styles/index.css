@@ -34,7 +34,7 @@ body, h2, h3 {
 
 @font-face {
   font-family: 'Gotham - Font';
-  src: url('/Gotham-Medium.otf');
+  src: url('/fonts/Gotham-Medium.otf');
 }
 
 @font-face {
