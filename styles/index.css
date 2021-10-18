@@ -27,23 +27,10 @@ body, h2, h3 {
   margin: 0;
   /* font-family: "Playfair Display", serif;
   font-weight: lighter; */
-  font-family: "Gotham - Font";
+  font-family: "Gotham";
   font-style: normal;
   font-weight: 400;
 }
-
-@font-face {
-  font-family: 'Gotham - Font';
-  src: url('/Gotham-Medium.woff2') format("woff2");
-}
-
-@font-face {
-  font-family: 'Montserrat - Font';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm45xW4.ttf) format('truetype');
-}
-
 
 /*Navbar*/
 #navbar {
@@ -80,7 +67,7 @@ body, h2, h3 {
   color: var(--main-color-light, white);
   cursor: pointer;
   display: inline-block;
-  font-family: "Montserrat - Font";
+  font-family: "Montserrat";
 }
 
 #navbarName.desktop {
@@ -112,7 +99,7 @@ body, h2, h3 {
   color: var(--main-color-light, white);
   cursor: pointer;
   display: inline-block;
-  font-family: "Montserrat - Font";
+  font-family: "Montserrat";
 }
 
 #mobileNavbarMenu {
