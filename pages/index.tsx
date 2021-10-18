@@ -14,12 +14,16 @@ import type { NextPage } from 'next'
 const Home: NextPage = () => {
   const router = useRouter();
 
+  let previousWindowSize = { height: 0, width: 0 };
+
   useEffect(() => {
     const unload = () => {console.log("UNLOAD");ScrollTrigger.getAll().forEach(each => each.kill());}
 
     const load = () => {
       console.log("LOAD");
       if (typeof window !== undefined) {
+        previousWindowSize = { height: window.innerHeight, width: window.innerWidth };
+        
         gsap.registerPlugin(ScrollTrigger);
 
         const vhFunc = (vh: number) => window.innerHeight * (vh / 100);
@@ -96,9 +100,18 @@ const Home: NextPage = () => {
       }
     });
 
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", (event) => {
+      const beforeReloadScrollPos = window.scrollY || document.documentElement.scrollTop;
+
+      // If width same and only height changed (fluctuating top bar on mobile, don't rerender as it messes up page position)
+      if (window.innerWidth === previousWindowSize.width && window.innerHeight !== previousWindowSize.height) {
+        return;
+      }
+
       unload();
       load();
+
+      window.scrollTo(0, beforeReloadScrollPos);
     });
 
     load();
