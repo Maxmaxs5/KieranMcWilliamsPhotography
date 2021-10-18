@@ -25,9 +25,21 @@ body, h2, h3 {
   margin: 0;
   /* font-family: "Playfair Display", serif;
   font-weight: lighter; */
-  font-family: "Gotham";
+  font-family: "Custom Gotham";
   font-style: normal;
   font-weight: 400;
+}
+
+@font-face {
+  font-family: "Custom Gotham";
+  src: url("/Gotham-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Custom Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Montserrat Regular"), local("Montserrat-Regular"), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm45xW4.ttf) format("truetype");
 }
 
 /*Navbar*/
@@ -73,7 +85,7 @@ body, h2, h3 {
   color: var(--main-color-light);
   cursor: pointer;
   display: inline-block;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
 }
 
 #navbarButtonsDiv {
@@ -97,7 +109,7 @@ body, h2, h3 {
   color: var(--main-color-light);
   cursor: pointer;
   display: inline-block;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
 }
 
 .navbarButton.icon {
@@ -121,7 +133,7 @@ body, h2, h3 {
   margin: 1.5vh;
   padding: 1vh 1.5vh;
   color: var(--main-color-light);
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
   background-color: transparent;
   border: 1px solid var(--main-color-light);
   border-radius: 5px;
@@ -164,7 +176,7 @@ body, h2, h3 {
   padding: 1.5vh 2vh;
   cursor: pointer;
   text-decoration: none;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
 }
 
 .navbarButtonMobile.icon {
@@ -486,7 +498,7 @@ body, h2, h3 {
   margin-bottom: 1em;
   font-size: 1.1em;
   line-height: 1.7em;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
 }
 
 
@@ -528,7 +540,7 @@ body, h2, h3 {
   margin-top: 4vh;
   font-size: 1.1em;
   line-height: 1.7em;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
 }
 
 #experienceDiv {
@@ -562,7 +574,7 @@ body, h2, h3 {
 
 .entryInfo {
   margin: 0;
-  font-family: "Montserrat";
+  font-family: "Custom Montserrat";
   font-size: .95em;
   line-height: 2em;
 }
