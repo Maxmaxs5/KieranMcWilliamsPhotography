@@ -39,10 +39,10 @@ const Home: NextPage = () => {
               // markers: true,
             },
             transform: "",
-            color: "white",
+            color: "#333",
             ease: "power1",
             // transform: "translate(0)",
-            // color: "white",
+            // color: "#333",
           });
         })
 
