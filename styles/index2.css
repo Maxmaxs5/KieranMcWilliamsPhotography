@@ -30,6 +30,18 @@ body, h2, h3 {
   font-weight: 400;
 }
 
+@font-face {
+  font-family: 'Gotham - Font';
+  src: url('/Gotham-Medium.woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat - Font';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm45xW4.ttf) format('truetype');
+}
+
 /*Navbar*/
 #navbar {
   position: fixed;
