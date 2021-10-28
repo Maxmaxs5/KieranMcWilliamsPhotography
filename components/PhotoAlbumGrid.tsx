@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-import PhotoAlbum from '../components/PhotoAlbum';
+import PhotoAlbum from 'components/PhotoAlbum';
 
-import { collections } from '../data/collections';
+import { collections } from 'data/collections';
 
 
 export default function PhotoAlbumGrid({
@@ -12,13 +12,15 @@ export default function PhotoAlbumGrid({
   isHome: boolean
 }) {
   const router = useRouter();
+  const { filter } = router.query;
 
   const [ active, setActive ] = useState(
-    (typeof router.query.filter === "string" && router.query.filter) ? router.query.filter : "All"
+    (typeof filter === "string" && filter) ? filter : "All"
   );
 
   const filterOptions = ["All", "People", "Nature"];
 
+  
   return (
     <>
       <div id="photoAlbumsFilter" style={{marginTop: isHome ? 0 : ""}}>

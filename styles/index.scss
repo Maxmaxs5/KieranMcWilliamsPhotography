@@ -1,43 +1,10 @@
-.dividerWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  // height: 10vh;
-  width: 100%;
+@import "mixins";
 
-  .divider {
-    height: 2px;
-    width: 50vw;
-    max-width: 333px;
-    background-color: var(--main-color-dark);
-  }
-}
+@import "globals";
 
-#aboutDiv {
-  padding: 0 !important;
-}
-
-#photoAlbumsFilter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1.25em 0 0.75em 0;
-
-  h3 {
-    padding: .33em;
-    font-size: 1.1em;
-    cursor: pointer;
-
-    &.active {
-      text-decoration: underline;
-      text-underline-offset: .1em;
-    }
-  }
-
-  .verticalDivider {
-    height: 1.75em;
-    width: 2px;
-    margin: 0 0.75em;
-    background-color: var(--main-color-dark);
-  }
-}
+@import "About";
+@import "CollectionsAndHighlights";
+@import "Lightbox";
+@import "Navbar";
+@import "PhotoAlbumsCollageAndFilter";
+@import "Profile";

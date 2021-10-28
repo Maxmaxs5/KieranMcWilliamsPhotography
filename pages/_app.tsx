@@ -1,8 +1,8 @@
 import Head from 'next/head';
 
-import '../styles/index.scss';
-import '../styles/index.css';
-import '../styles/index2.css';
+import Navbar from 'components/Navbar';
+
+import 'styles/index.scss';
 
 import type { AppProps } from 'next/app';
 
@@ -16,10 +16,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
         {/* TODO: CHANGE TO BE PER PAGE? */}
 
-        <title>Kieran McWilliams Photography</title>
+        <title>McWilliams Photo</title>
         <meta name="description" content="Welcome to my photography website! I hope you enjoy your stay!" />
 
-        <meta property="og:title" content="Kieran McWilliams Photography Website" />
+        <meta property="og:title" content="McWilliams Photo Website" />
         <meta property="og:image" content="https://kieranmcwilliams.com/Kieran_McWilliams_Website_Image.png" />
         <meta property="og:description" content="Welcome to my photography website! I hope you enjoy your stay!" />
 
@@ -29,6 +29,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
         <link rel="preload" href="/Gotham-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </Head>
+
+      <Navbar />
 
       <Component {...pageProps} />
     </>

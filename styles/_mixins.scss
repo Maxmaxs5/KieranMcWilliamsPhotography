@@ -1,0 +1,59 @@
+@mixin m1100 {
+  @media only screen and (min-width: 0px) and (max-width: 1100px) {
+    @content;
+  }
+}
+
+@mixin m888 {
+  @media only screen and (min-width: 0px) and (max-width: 888px) {
+    @content;
+  }
+}
+
+@mixin m825portrait {
+  @media only screen and (min-width: 0px) and (max-width: 825px) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin m555portrait {
+  @media only screen and (min-width: 0px) and (max-width: 555px) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin m450 {
+  @media only screen and (min-width: 0px) and (max-width: 450px) {
+    @content;
+  }
+}
+
+@mixin m400portrait {
+  @media only screen and (min-width: 0px) and (max-width: 400px) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin m350portrait {
+  @media only screen and (min-width: 0px) and (max-width: 350px) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin m450and825landscape {
+  @media only screen and (min-height: 0px) and (max-height: 450px) and (min-width: 0px) and (max-width: 825px) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin m450and650landscape {
+  @media only screen and (min-height: 0px) and (max-height: 450px) and (min-width: 0px) and (max-width: 650px) and (orientation: landscape) {
+    @content;
+  }
+}
+
+@mixin mdark {
+  @media only screen and (prefers-color-scheme: dark) {
+    @content;
+  }
+}

@@ -1,0 +1,157 @@
+@use "mixins";
+
+
+#navbar {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  height: 8vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 1px 4px rgba(0,0,0,.5);
+  transition: 0.3s;
+
+  &.scrolled {
+    background-color: var(--main-color-dark);
+  }
+
+  @include m450 {
+    height: 9vh;
+  }
+  @include m450and825landscape {
+    height: 12vh;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+
+  #navbarContainer {
+    display: flex;
+    height: 8vh;
+    width: 90%;
+    margin-left: 5%;
+
+    @include m1100 {
+      width: 98%;
+      margin-left: 0.5%;
+    }
+    @include m450 {
+      height: 9vh;
+      width: 98%;
+      margin-left: 0.5%;
+    }
+    @include m450and825landscape {
+      height: 12vh;
+      width: 98%;
+      margin-left: 2vh;
+    }
+
+    #navbarImage {
+      display: inline-block;
+      margin: 1.25vh 1vh;
+      height: 5.5vh;
+      width: 5.5vh;
+      background: url("https://storage.googleapis.com/mcwilliamsphoto/TEMP_LOGO.png");
+      background-size: cover;
+      
+      @include m450and825landscape {
+        height: 8vh;
+        width: 8vh;
+        margin: 2vh 0vh;
+      }
+      @include m450 {
+        height: 6.5vh;
+        width: 6.5vh;
+      }
+    }
+    
+    #navbarName {
+      width: fit-content;
+      height: 8vh;
+      line-height: 4vh;
+      margin: 2vh 0;
+      padding: 0 2vh;
+      font-size: 3.5vh;
+      color: var(--main-color-light);
+      cursor: pointer;
+      display: inline-block;
+      font-family: "Custom Montserrat";
+      
+      @include m825portrait {
+        font-size: 3vh;
+      }
+      @include m555portrait {
+        display: none;
+      }
+      @include m450and825landscape {
+        font-size: 4vh;
+        line-height: 8vh;
+        height: 8vh;
+        margin-left: 1vh;
+      }
+    }
+  
+    #navbarButtonsDiv {
+      position: fixed;
+      top: 0;
+      right: 5%;
+      width: fit-content;
+      height: 8vh;
+      margin: 0;
+      padding: 0 2vh;
+      display: inline-block;
+
+      @include m1100 {
+        right: 0.5%;
+      }
+      @include m450 {
+        height: 9vh;
+      }
+  
+      .navbarButton {
+        width: fit-content;
+        height: 4vh;
+        line-height: 4vh;
+        margin: 1vh 0;
+        margin-left: 0.5em;
+        padding: 1vh 2vh;
+        font-size: 2vh;
+        color: var(--main-color-light);
+        cursor: pointer;
+        display: inline-block;
+        font-family: "Custom Montserrat";
+
+        &:nth-of-type(1) {
+          margin-left: 0;
+        }
+  
+        &.active {
+          background-color: var(--main-color-blue);
+          
+          @include mdark {
+            background-color: var(--main-color-blue-dark);
+          }
+        
+          &:hover {
+            color: var(--main-color-light);
+          }
+        }
+
+        @include m1100 {
+          padding: 1vh 1.5vh;
+        }
+        @include m450 {
+          line-height: 5vh;
+          height: 5vh;
+        }
+        @include m450and825landscape {
+          line-height: 8vh;
+          height: 8vh;
+          font-size: 3vh;
+        }
+      }
+    }
+  }
+}

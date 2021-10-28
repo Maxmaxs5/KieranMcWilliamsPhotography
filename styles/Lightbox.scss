@@ -1,0 +1,148 @@
+@use "mixins";
+
+
+#lightbox {
+  z-index: 101;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+
+  
+  #lightboxImageDiv {
+    & > div {
+      // 2 * 1em for own margin left/right against edges
+      max-width: calc(100vw - 2 * 1em);
+      // 1em for own top, and bottom bar: 1em below, 0.5em above, 2 * 0.5em inside padding, and 2em max-height
+      max-height: calc(100vh - 1em - 1em - 0.5em - 2 * 0.5em - 2em);
+      margin: 1em auto !important;
+      
+      @include m555portrait {
+        // 2 * 0.5em for own margin left/right against edges
+        max-width: calc(100vw - 2 * 0.5em);
+        // 0.5em for own top, and bottom bar: 0.5em below, 0.5em above, 2 * 0.4em inside padding, and 4em max-height
+        max-height: calc(100vh - 0.5em - 0.5em - 0.5em - 2 * 0.4em - 4em);
+        margin: 0.5em auto !important;
+      }
+      @include m450and825landscape {
+        // 2 * 0.5em for own margin left/right against edges
+        max-width: calc(100vw - 2 * 0.5em);
+        // 0.5em for own top, and bottom bar: 0.5em below, 0.5em above, 2 * 0.5em inside padding, and 1.5em max-height
+        max-height: calc(100vh - 0.5em - 0.5em - 0.5em - 2 * 0.5em - 1.5em);
+        margin: 0.5em auto !important;
+      }
+
+      & > img {
+        width: fit-content !important;
+        min-width: unset !important;
+        background-repeat: no-repeat;
+      }
+    }
+  }
+
+
+  .lightboxActionDiv {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 1em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-height: 2em;
+    padding: 0.5em 1em;
+    color: var(--main-color-light);
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px 8px rgb(0 0 0 / 50%);
+
+    @include m555portrait {
+      display: none;
+    }
+    @include m450and825landscape {
+      bottom: 0.5em;
+      max-height: 1.5em;
+      padding: 0.5em 0.75em;
+    }
+
+    &.mobile {
+      display: none;
+      flex-direction: column;
+      bottom: 0.5em;
+      max-height: 4em;
+      padding: 0.4em 0.6em;
+      
+      @include m555portrait {
+        display: flex;
+      }
+      
+      & > div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        max-height: 2em;
+        padding: 0.125em;
+      }
+
+      h1 {
+        font-size: 1em;
+      }
+
+      h2 {
+        font-size: 0.9em;
+      }
+
+      .verticalDivider {
+        height: 1.5em;
+      }
+    }
+  
+    h1 {
+      font-size: 1.2em;
+      cursor: pointer;
+      
+      @include m450and825landscape {
+        font-size: 1em;
+      }
+    }
+
+    h2 {
+      font-size: 1em;
+      
+      @include m450and825landscape {
+        font-size: 0.85em;
+      }
+    }
+
+    .verticalDivider {
+      @include m450and825landscape {
+        height: 1.5em;
+      }
+    }
+
+    #lightboxFullResolutionDiv {
+      display: flex;
+      align-items: center;
+      padding: 0.5em 0;
+      cursor: pointer;
+
+      label {
+        margin-left: 0.25em;
+      }
+    }
+
+    #lightboxLeftButton, #lightboxRightButton {
+      padding: 0.25em 0.5em;
+      cursor: pointer;
+
+      .lightboxButtonIcon {
+        font-size: 1.8em;
+      }
+    }
+  }
+}

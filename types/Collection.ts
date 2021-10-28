@@ -11,5 +11,6 @@ export interface Collection {
     src: string,
     rows: number | string,
     cols: number | string,
+    folder?: string,
   }[],
 }

@@ -1,0 +1,103 @@
+@use "mixins";
+
+
+* {
+  // transition: all 0.3s;
+
+  --main-color-dark: #333;
+  --main-color-darkish: #262626;
+  --main-color-darker: #212223;
+  --main-color-light: white;
+
+  // --main-color-blue: #1278a1;
+  // --main-color-blue: #3ab7ea;
+  --main-color-blue: #00a0d0;
+  --main-color-blue-focus: #0080b0;
+  --main-color-blue-dark: #005775;
+}
+
+html {
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  height: 92vh;
+  margin-top: 8vh;
+}
+
+html, body {
+  max-width: 100vw;
+  background-color: var(--main-color-light);
+  
+  @include mdark {
+    // background-color: #555;
+    background-color: var(--main-color-darkish);
+  }
+}
+
+body, h1, h2, h3, h4 {
+  margin: 0;
+  font-family: "Custom Gotham";
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Custom Gotham";
+  src: url("/Gotham-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Custom Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Montserrat Regular"), local("Montserrat-Regular"), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm45xW4.ttf) format("truetype");
+}
+
+#bodyContainer {
+  width: 100vw;
+  height: 92%;
+  margin-top: 8vh;
+  text-align: center;
+  overflow: hidden;
+
+  @include m450 {
+    margin-top: 10vh;
+  }
+  @include m450and825landscape {
+    margin-top: 14vh;
+  }
+}
+
+.dividerWrapper {
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // height: 10vh;
+  width: 100%;
+
+  .divider {
+    height: 2px;
+    width: 50vw;
+    max-width: 333px;
+    background-color: var(--main-color-dark);
+
+    @include mdark {
+      background-color: var(--main-color-light);
+    }
+  }
+}
+
+.verticalDivider {
+  height: 1.75em;
+  width: 2px;
+  margin: 0 0.75em;
+  background-color: var(--main-color-dark);
+
+  @include mdark {
+    background-color: var(--main-color-light);
+  }
+}

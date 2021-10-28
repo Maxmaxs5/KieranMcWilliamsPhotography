@@ -1,6 +1,6 @@
 import { ImageLoader } from 'next/image'
 
-import { gcpBaseURL } from '../data/globals';
+import { gcpBaseURL } from 'data/globals';
 
 
 /**
@@ -10,17 +10,7 @@ import { gcpBaseURL } from '../data/globals';
  * @returns The title of the folder
  */
 export const folderToTitle = (folder: string) => {
-  return folder.substring(folder.indexOf("_") + 1).replace(/_/g, " ");
-}
-
-/**
- * Deconstructs a collection's folder string into its date string
- * 
- * @param folder The folder string for a collection
- * @returns The date string of the folder
- */
-export const folderToMainDateString = (folder: string) => {
-  return folder.substring(0, folder.indexOf("_"));
+  return folder.replace(/_/g, " ");
 }
 
 /**
@@ -31,6 +21,22 @@ export const folderToMainDateString = (folder: string) => {
  *   but we simply always use the same pre-optimized version, allowing us to only need to make one custom image
  * @returns The full URL for the image to be used in the Next.js Image element
  */
-export const imageLoader: ImageLoader = ({ src, width, quality }) => {
-  return `${gcpBaseURL}/${src}?width=${width}`;
+export const imageLoader: ImageLoader = ({ src }) => {
+  return `${gcpBaseURL}/${src}`;
+  // return `${gcpBaseURL}/${src}?width=${width}`;
+}
+
+/**
+ * Gets the current scroll position of the page
+ * 
+ * @param window The global window element, passed a param to ensure defined correctly in this scope
+ * @param document The global document element, passed a param to ensure defined correctly in this scope
+ * @returns The current scroll position
+ */
+export const getCurrentScrollPos = (window: Window & typeof globalThis, document: Document) => {
+  if (typeof window !== undefined) {
+    return window.scrollY || document.documentElement.scrollTop;
+  } else {
+    return 0;
+  }
 }

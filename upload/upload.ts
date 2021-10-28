@@ -2,7 +2,13 @@ import fs from "fs";
 import sharp from "sharp";
 import { Storage } from "@google-cloud/storage";
 
-import { gcpAlbumPhotoEnding, gcpOptimizedDirName } from "../data/globals";
+import {
+  gcpAlbumPhotoEnding,
+  gcpAlbumPhotoBlurredEnding,
+  gcpBlurDirName,
+  gcpFullDirName,
+  gcpOptimizedDirName
+} from "../data/globals";
 
 
 /*
@@ -29,6 +35,8 @@ import { gcpAlbumPhotoEnding, gcpOptimizedDirName } from "../data/globals";
  */
 
 
+const doingFastUpload = process.argv.includes("doFastUpload");
+
 const minFileSizeKB = 700;
 const maxFileSizeKB = 1000;
 const startingSharpQuality = 50;
@@ -42,7 +50,16 @@ const numSharpIterations =
   (sharpQualityFarPoint) / sharpQualitySmallerIncrement;
 
 const gcpBucketName = "mcwilliamsphoto";
+const gcpDirNames = [ gcpFullDirName, gcpOptimizedDirName, gcpBlurDirName ];
 const uploadPhotoDir = "upload/photos";
+
+// TODO: NEW LOGO
+// Note: sized to ~950x950 inner / 1750x3500 total and ~550x550 inner / 1000x2000 total
+const watermarkLogoPathLG = "upload/TEMP_LOGO_NEW_LG.png";
+const watermarkLogoPathSM = "upload/TEMP_LOGO_NEW_SM.png";
+// Note: transparent to 33/255 = ~13%
+const watermarkLogoPathLGTransparent = "upload/TEMP_LOGO_NEW_LG_TRANSPARENT.png";
+const watermarkLogoPathSMTransparent = "upload/TEMP_LOGO_NEW_SM_TRANSPARENT.png";
 
 const storage = new Storage();
 
@@ -53,6 +70,14 @@ const storage = new Storage();
  * @param gcpPath The file's to-be GCP path
  */
 const uploadFile = async(localPath: string, gcpPath: string) => {
+  if (doingFastUpload) {
+    const exists = await storage.bucket(gcpBucketName).file(gcpPath).exists();
+
+    if (!exists.flat().includes(false)) {
+      return;
+    }
+  }
+
   await storage.bucket(gcpBucketName).upload(localPath, {
     destination: gcpPath,
   });
@@ -64,23 +89,34 @@ const uploadFile = async(localPath: string, gcpPath: string) => {
  * A recursive function that optimizes and uploads an image to be within the file size range set above
  * 
  * @param origLocalFilePath The local filepath for the original full-resolution image
- * @param origGCPFilePath The to-be GCP filepath for the original full-resolution image
+ * @param fullLocalFilePath The local filepath for the watermarked full-resolution image
+ * @param fullGCPFilePath The to-be GCP filepath for the watermarked full-resolution image
  * @param optimizedLocalFilePath The local filepath for the to-be optimized image
  * @param optimizedGCPFilePath The to-be GCP filepath for the to-be optimized image
+ * @param blurLocalFilePath The local filepath for the to-be blur image
+ * @param blurGCPFilePath The to-be GCP filepath for the to-be blur image
  * @param quality The quality to be used by Sharp when optimizing the image
  * @param iteration The current iteration counter, ensures that this method does not infinite loop by exiting early,
  *   if unable to make it within the file size range within the set number of iterations
  */
 const optimizeAndUpload = (
   origLocalFilePath: string,
-  origGCPFilePath: string,
+  fullLocalFilePath: string,
+  fullGCPFilePath: string,
   optimizedLocalFilePath: string,
   optimizedGCPFilePath: string,
+  blurLocalFilePath: string,
+  blurGCPFilePath: string,
   quality = startingSharpQuality,
   iteration = 0
 ) => {
+  // Sharp the original to the optimized
   sharp(origLocalFilePath)
-    .jpeg({ quality: quality })
+    .composite([{
+      input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLGTransparent : watermarkLogoPathSMTransparent,
+      gravity: 'centre'
+    }])
+    .jpeg({ quality: Math.min(Math.max(quality, 0), 100) })
     .toFile(optimizedLocalFilePath)
     .then((data) => {
       const fileSizeKB = Math.round(data.size / 1024);
@@ -92,18 +128,73 @@ const optimizeAndUpload = (
       ) {
         console.log({optimizedGCPFilePath, iteration, quality, fileSizeKB});
 
-        uploadFile(origLocalFilePath, origGCPFilePath).catch(console.error);
-        uploadFile(optimizedLocalFilePath, optimizedGCPFilePath).catch(console.error);
+        // Sharp the original to the blurred
+        sharp(origLocalFilePath)
+          .resize({
+            fit: sharp.fit.contain,
+            height: data.height > data.width ? 500 : undefined,
+            width: data.width > data.height ? 500 : undefined,
+          })
+          .blur()
+          .jpeg({ quality: 10 })
+          .toFile(blurLocalFilePath)
+          .then(() => {
+            // Sharp the original to the watermarked full-res
+            sharp(origLocalFilePath)
+              .composite([{
+                input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLG : watermarkLogoPathSM,
+                gravity: 'southeast'
+              }, {
+                input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLGTransparent : watermarkLogoPathSMTransparent,
+                gravity: 'centre'
+              }])
+              .jpeg({ quality: 100 })
+              .toFile(fullLocalFilePath)
+              .then(() => {
+                uploadFile(fullLocalFilePath, fullGCPFilePath).catch(console.error);
+                uploadFile(optimizedLocalFilePath, optimizedGCPFilePath).catch(console.error);
+                uploadFile(blurLocalFilePath, blurGCPFilePath).catch(console.error);
+              });
+          });
       } else {
         const increment = quality < 85 && quality > 15 ? sharpQualityIncrement : sharpQualitySmallerIncrement;
 
         const newQuality = fileSizeKB < minFileSizeKB ? quality + increment : quality - increment;
         
         optimizeAndUpload(
-          origLocalFilePath, origGCPFilePath, optimizedLocalFilePath, optimizedGCPFilePath,
+          origLocalFilePath, fullLocalFilePath, fullGCPFilePath,
+          optimizedLocalFilePath, optimizedGCPFilePath, blurLocalFilePath, blurGCPFilePath,
           newQuality, iteration + 1
         );
       }
+    });
+}
+
+/**
+ * A function that blurs and uploads both the original and blurred versions of the given album image
+ * 
+ * @param albumLocalFilePath The local filepath for the custom album image
+ * @param albumGCPFilePath The to-be GCP filepath for the blurred custom album image
+ */
+ const blurAndUploadAlbumPhoto = (
+  albumLocalFilePath: string,
+  albumGCPFilePath: string,
+) => {
+  const albumBlurredLocalFilePath = albumLocalFilePath.replace(gcpAlbumPhotoEnding, gcpAlbumPhotoBlurredEnding);
+  const albumBlurredGCPFilePath = albumGCPFilePath.replace(gcpAlbumPhotoEnding, gcpAlbumPhotoBlurredEnding);
+    
+  // Sharp the original to the blurred
+  sharp(albumLocalFilePath)
+    .resize({
+      height: 200,
+      width: 200,
+    })
+    .blur()
+    .jpeg({ quality: 10 })
+    .toFile(albumBlurredLocalFilePath)
+    .then(() => {
+      uploadFile(albumLocalFilePath, albumGCPFilePath).catch(console.error);
+      uploadFile(albumBlurredLocalFilePath, albumBlurredGCPFilePath).catch(console.error);
     });
 }
 
@@ -114,7 +205,7 @@ const optimizeAndUpload = (
  * 
  * @param path The path to the directory to be read and uploaded
  */
-const readDirAndUpload = (path: string) => {
+const readDirAndUpload = async(path: string) => {
   fs.readdir(path, (err, newCollectionFolders) => {
     if (err) {
       return console.log(err);
@@ -129,32 +220,59 @@ const readDirAndUpload = (path: string) => {
             return console.log(err);
           }
 
-          const optimizedLocalDirPath = `${folderFilePath}/${gcpOptimizedDirName}`;
+          const [ fullLocalDirPath, optimizedLocalDirPath, blurLocalDirPath ] = gcpDirNames.map(each => {
+            return `${folderFilePath}/${each}`;
+          });
 
-          if (!fs.existsSync(optimizedLocalDirPath)) {
-            fs.mkdir(optimizedLocalDirPath, (err) => {
-              if (err) {
-                return console.log(err);
-              }
-            });
-          }
+          [ fullLocalDirPath, optimizedLocalDirPath, blurLocalDirPath ].forEach(each => {
+            if (!fs.existsSync(each)) {
+              fs.mkdir(each, (err) => {
+                if (err) {
+                  return console.log(err);
+                }
+              });
+            }
+          })
         
-          newFiles.forEach((newFile) => {
+          newFiles.forEach(async(newFile) => {
             const filePath = `${folderFilePath}/${newFile}`;
 
             if (!fs.lstatSync(filePath).isDirectory()) {
               if (newFile.includes(gcpAlbumPhotoEnding)) {
-                uploadFile(
+                blurAndUploadAlbumPhoto(
                   filePath, `${newCollectionFolder}/${newFile}`,
-                );
+                )
               } else {
-                optimizeAndUpload(
-                  filePath, `${newCollectionFolder}/${newFile}`,
-                  `${optimizedLocalDirPath}/${newFile}`, `${newCollectionFolder}/${gcpOptimizedDirName}/${newFile}`
-                );
+                const [ fullGCPFilePath, optimizedGCPFilePath, blurGCPFilePath ] = gcpDirNames.map(each => {
+                  return `${newCollectionFolder}/${each}/${newFile}`;
+                });
+                
+                let doUpload = true;
+                if (doingFastUpload) {
+                  const allExist = await Promise.all([
+                    fullGCPFilePath, optimizedGCPFilePath, blurGCPFilePath
+                  ].map(each => {
+                    return storage.bucket(gcpBucketName).file(each).exists();
+                  }))
+                  
+                  if (!allExist.flat().includes(false)) {
+                    doUpload = false;
+                  }
+                }
+
+                if (doUpload) {
+                  optimizeAndUpload(
+                    filePath,
+                    `${fullLocalDirPath}/${newFile}`, fullGCPFilePath,
+                    `${optimizedLocalDirPath}/${newFile}`, optimizedGCPFilePath,
+                    `${blurLocalDirPath}/${newFile}`, blurGCPFilePath
+                  );
+                }
               }
             } else {
-              console.log(`${filePath} is not a file`);
+              if (!gcpDirNames.some(each => filePath.endsWith(each))) {
+                console.log(`${filePath} is not a file`);
+              }
             }
           });
         });
