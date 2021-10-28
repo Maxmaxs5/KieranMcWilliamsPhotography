@@ -43,7 +43,6 @@ const Home: NextPage = () => {
           gsap.to(eachSelector, {
             scrollTrigger: {
               trigger: eachSelector,
-              scroller: document.body,
               start: () => "top " + vhFunc(95),
               end: () => "top " + vhFunc(55),
               // scrub: true,
@@ -75,7 +74,6 @@ const Home: NextPage = () => {
           gsap.to(`${each} .showcaseBackground`, {
             scrollTrigger: {
               trigger: each,
-              scroller: document.body,
               start: () => "center " + vhFunc(50),
               end: () => vhFunc(120) + " top",
               scrub: true,

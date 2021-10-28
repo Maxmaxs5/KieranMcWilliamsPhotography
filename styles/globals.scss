@@ -19,16 +19,12 @@
 html {
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  height: 92vh;
+  margin-top: 8vh;
 }
 
 html, body {
