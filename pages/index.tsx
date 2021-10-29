@@ -85,8 +85,8 @@ const Home: NextPage = () => {
             },
             backgroundSize: "200%",
             backgroundPositionY: "33%",
-            height: () => finalImageHeight + "px",
-            y: () => "-" + imageAdjustment + "px",
+            // height: () => finalImageHeight + "px",
+            // y: () => "-" + imageAdjustment + "px",
           });
         })
       }
