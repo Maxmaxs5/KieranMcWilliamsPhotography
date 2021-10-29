@@ -225,12 +225,13 @@ const readDirAndUpload = async(path: string) => {
           });
 
           [ fullLocalDirPath, optimizedLocalDirPath, blurLocalDirPath ].forEach(each => {
-            if (!fs.existsSync(each)) {
-              fs.mkdir(each, (err) => {
-                if (err) {
-                  return console.log(err);
-                }
-              });
+            if (doingFastUpload) {
+              if (!fs.existsSync(each)) {
+                fs.mkdirSync(each);
+              }
+            } else {
+              fs.rmdirSync(each);
+              fs.mkdirSync(each);
             }
           })
         

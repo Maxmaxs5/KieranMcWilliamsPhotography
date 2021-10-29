@@ -16,7 +16,7 @@ export const highlightsCollection: Collection = {
 
     { src: "DSCF4249.jpg", rows: 8, cols: 8, folder: "Lara_Megan_Mary_Clare" },
     { src: "DSC_5527.jpg", rows: 8, cols: 10, folder: "Vivian_G_Phi_Reveal" },
-    
+
     { src: "DSCF5119.jpg", rows: 12, cols: 10, folder: "Snow_Squirrels" },
     { src: "DSCF7892.jpg", rows: 12, cols: 8, folder: "RS_Career_Fair_Prep" },
 
@@ -29,11 +29,13 @@ export const highlightsCollection: Collection = {
 
     { src: "DSCF5924.jpg", rows: 14, cols: 11, folder: "KC_Garmin_Arkansas_Trip" },
     { src: "DSC_5802.jpg", rows: 10, cols: 7, folder: "Home_Winter_Sunset_Lake" },
+    { src: "DSC_5284.jpg", rows: 6, cols: 7, folder: "Random" },
+    { src: "DSCF0505.jpg", rows: 7, cols: 11, folder: "Random" },
     { src: "DSCF4948.jpg", rows: 10, cols: 7, folder: "Lara_Megan_Mary_Clare" },
     { src: "DSCF8419.jpg", rows: 12, cols: 11, folder: "RS_Career_Fair_Prep" },
     { src: "DSC_3769.jpg", rows: 9, cols: 7, folder: "RS_Internship_Highlights_1" },
     { src: "DSC_7557.jpg", rows: 12, cols: 11, folder: "Florida_Trip" },
-    { src: "DSC_5565.jpg", rows: 9, cols: 7, folder: "Vivian_G_Phi_Reveal" },
+    { src: "DSC_5565.jpg", rows: 10, cols: 7, folder: "Vivian_G_Phi_Reveal" },
     
     { src: "DSC_5770.jpg", rows: 6, cols: 8, folder: "Home_Winter_Sunset_Lake" },
     { src: "DSCF7026.jpg", rows: 8, cols: 10, folder: "Cohort_Christmas" },
