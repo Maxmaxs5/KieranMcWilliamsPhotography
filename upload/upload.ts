@@ -8,7 +8,8 @@ import {
   gcpBlurDirName,
   gcpFullDirName,
   gcpOptimizedDirNameWeb,
-  gcpOptimizedDirNameMobile
+  gcpOptimizedDirNameMobile,
+  gcpOptimizedDirNameMobileGrid,
 } from "../data/globals";
 
 
@@ -45,6 +46,8 @@ const minFileSizeKBWeb = 700;
 const maxFileSizeKBWeb = 1000;
 const minFileSizeKBMobile = 300;
 const maxFileSizeKBMobile = 500;
+const minFileSizeKBMobileGrid = 200;
+const maxFileSizeKBMobileGrid = 300;
 const startingSharpQuality = 50;
 const sharpQualityIncrement = 5;
 const sharpQualitySmallerIncrement = 2;
@@ -56,7 +59,9 @@ const numSharpIterations =
   (sharpQualityFarPoint) / sharpQualitySmallerIncrement;
 
 const gcpBucketName = "mcwilliamsphoto";
-const gcpDirNames = [ gcpFullDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile, gcpBlurDirName ];
+const gcpDirNames = [
+  gcpFullDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile, gcpOptimizedDirNameMobileGrid, gcpBlurDirName
+];
 const uploadPhotoDir = "upload/photos";
 
 const watermarkMainLogoBasePath = "upload/mcwilliams_photo_logo_watermark";
@@ -81,6 +86,16 @@ const watermarks: {
 };
 
 const storage = new Storage();
+
+/**
+ * Returns whether to not process/upload a given file by GCP filepath
+ * 
+ * @param gcpPath The file's GCP path
+ * @returns Whether the file should be not processed/uploaded
+ */
+const dontUploadFile = async (gcpPath: string) => {
+  return doingFastUpload && await fileIsInGCP(gcpPath);
+}
 
 /**
  * Returns whether or not a file is in GCP
@@ -108,7 +123,7 @@ const fileIsInGCP = async (gcpPath: string) => {
  * @param gcpPath The file's to-be GCP path
  */
 const uploadFile = async(localPath: string, gcpPath: string) => {
-  if (doingFastUpload && await fileIsInGCP(gcpPath)) {
+  if (await dontUploadFile(gcpPath)) {
     return;
   }
 
@@ -140,7 +155,7 @@ const uploadFile = async(localPath: string, gcpPath: string) => {
   blurLocalFilePath: string,
   blurGCPFilePath: string,
 ) => {
-  if (doingFastUpload && await fileIsInGCP(fullGCPFilePath) && await fileIsInGCP(blurGCPFilePath)) {
+  if (await dontUploadFile(fullGCPFilePath) && await dontUploadFile(blurGCPFilePath)) {
     return;
   }
 
@@ -212,7 +227,7 @@ const optimizeAndUpload = async (
   quality = startingSharpQuality,
   iteration = 0
 ) => {
-  if (doingFastUpload && await fileIsInGCP(optimizedGCPFilePath)) {
+  if (await dontUploadFile(optimizedGCPFilePath)) {
     return;
   }
 
@@ -242,11 +257,24 @@ const optimizeAndUpload = async (
       const shortEdgeLength = Math.min(metadata.height, metadata.width);
       const watermarkInfo = await getWatermarkInfo(shortEdgeLength);
 
-      await image
+      let imageBuffer = await image
         .composite([{
           input: watermarkInfo.watermarkLogoPathSquare,
           gravity: 'centre'
         }])
+        .toBuffer();
+      
+      if (optimizedGCPFilePath.includes(gcpOptimizedDirNameMobileGrid)) {
+        imageBuffer = await sharp(imageBuffer)
+          .resize({
+            fit: sharp.fit.contain,
+            height: metadata.height <= metadata.width ? 1000 : undefined,
+            width: metadata.width <= metadata.height ? 1000 : undefined,
+          })
+          .toBuffer();
+      }
+
+      await sharp(imageBuffer)
         .jpeg({ quality: Math.min(Math.max(quality, 0), 100) })
         .toFile(optimizedLocalFilePath)
         .then(async (data) => {
@@ -284,7 +312,7 @@ const optimizeAndUpload = async (
   albumLocalFilePath: string,
   albumGCPFilePath: string,
 ) => {
-  if (doingFastUpload && await fileIsInGCP(albumGCPFilePath)) {
+  if (await dontUploadFile(albumGCPFilePath)) {
     return;
   }
 
@@ -402,7 +430,9 @@ const readDirAndUpload = async(path: string) => {
         return `${folderFilePath}/${each}`;
       });
 
-      const [ fullLocalDirPath, optimizedLocalDirPathWeb, optimizedLocalDirPathMobile, blurLocalDirPath ] = localDirPaths;
+      const [
+        fullLocalDirPath, optimizedLocalDirPathWeb, optimizedLocalDirPathMobile, optimizedLocalDirPathMobileGrid, blurLocalDirPath
+      ] = localDirPaths;
 
       localDirPaths.forEach(each => {
         if (!doingFastUpload && fs.existsSync(each)) {
@@ -428,8 +458,10 @@ const readDirAndUpload = async(path: string) => {
               return `${newCollectionFolder}/${each}/${newFile}`;
             });
 
-            const [ fullGCPFilePath, optimizedGCPFilePathWeb, optimizedGCPFilePathMobile, blurGCPFilePath ] = gcpFilePaths;
-                        
+            const [
+              fullGCPFilePath, optimizedGCPFilePathWeb, optimizedGCPFilePathMobile, optimizedGCPFilePathMobileGrid, blurGCPFilePath
+            ] = gcpFilePaths;
+            
             await Promise.all([
               // Web
               optimizeAndUpload(
@@ -442,6 +474,12 @@ const readDirAndUpload = async(path: string) => {
                 filePath,
                 `${optimizedLocalDirPathMobile}/${newFile}`, optimizedGCPFilePathMobile,
                 minFileSizeKBMobile, maxFileSizeKBMobile
+              ),
+              // Mobile Grid
+              optimizeAndUpload(
+                filePath,
+                `${optimizedLocalDirPathMobileGrid}/${newFile}`, optimizedGCPFilePathMobileGrid,
+                minFileSizeKBMobileGrid, maxFileSizeKBMobileGrid
               ),
               // Full-Res and Blurred
               watermarkFullResAndBlurFullResAndUpload(

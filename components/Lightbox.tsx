@@ -120,6 +120,7 @@ export default function Lightbox({
         <div>
           {
             // getImage("blur")
+            
             typeof window !== "undefined"
               ? getImage(windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
               : null

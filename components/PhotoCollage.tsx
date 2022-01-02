@@ -1,7 +1,13 @@
 import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { gcpBaseURL, gcpBlurDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile } from 'data/globals';
+import {
+  gcpBaseURL,
+  gcpBlurDirName,
+  gcpOptimizedDirNameWeb,
+  gcpOptimizedDirNameMobileGrid,
+  maxWidthFullWidthCollections
+} from 'data/globals';
 
 import { Collection, CollectionPhoto } from 'types/Collection';
 import { windowIsMobile } from 'helpers/helpers';
@@ -19,7 +25,7 @@ export default function PhotoCollage({
   const [ widthVW, setWidthVW ] = useState(75);
 
   const photoCollageUpdates = () => {
-    if (window.matchMedia("only screen and (min-width: 0px) and (max-width: 1100px)").matches) {
+    if (window.matchMedia(`only screen and (min-width: 0px) and (max-width: ${maxWidthFullWidthCollections}px)`).matches) {
       if (widthVW !== 96) {
         setWidthVW(96);
       }
@@ -90,7 +96,17 @@ export default function PhotoCollage({
             >
               <div>
                 {
-                  getImage(imgFolder, each, "blur")
+                  typeof window !== "undefined"
+                    ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobileGrid : gcpOptimizedDirNameWeb)
+                    // ? getImage(imgFolder, each, (
+                    //   windowIsMobilePortrait(window) ? gcpOptimizedDirNameMobileGrid : (
+                    //     windowIsMobileLandscape(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb
+                    //   )
+                    // ))
+                    : null
+
+                  // getImage(imgFolder, each, "blur")
+
                   // typeof window !== "undefined"
                   //   ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
                   //   : null
