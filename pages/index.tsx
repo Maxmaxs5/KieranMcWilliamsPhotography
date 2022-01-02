@@ -134,7 +134,7 @@ const Home: NextPage = () => {
     if (typeof window !== undefined) {
       window.addEventListener("resize", (event) => {
         // If width same and only height changed (fluctuating top bar on mobile, don't rerender as it messes up page position)
-        if (window.innerWidth === previousWindowSize.width && window.innerHeight !== previousWindowSize.height) {
+        if (window.innerWidth === previousWindowSize.width) {
           return;
         }
   
