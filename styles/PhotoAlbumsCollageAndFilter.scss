@@ -72,7 +72,7 @@
     & > div {
       position: relative;
 
-      & > div {
+      & > div > div {
         height: 100%;
         width: 100%;
         background-size: cover;
@@ -87,11 +87,17 @@
     overflow: hidden;
     cursor: pointer;
   }
-  #photoCollage > div > div:hover,
-  #photoAlbums > div > div > div > img:hover {
-    transform: scale(1.05);
+  #photoCollage > div:hover {
+    & > div > div {
+      transform: scale(1.05);
+    }
   }
-  #photoCollage > div > div:hover::before,
+  #photoAlbums > div:hover {
+    & > div > div > img {
+      transform: scale(1.05);
+    }
+  }
+  #photoCollage > div > div > div:hover::before,
   #photoAlbums > div > div > div > img:hover::before {
     content: '';
     height: 100%;
@@ -118,7 +124,12 @@
       padding: 0.33em;
       font-size: 1.1em;
       cursor: pointer;
+      transition: 0.3s;
 
+      &:hover {
+        color: var(--main-color-blue);
+      }
+      
       &.active {
         text-decoration: underline;
         text-underline-offset: 0.1em;

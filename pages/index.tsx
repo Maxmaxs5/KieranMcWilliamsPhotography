@@ -7,8 +7,6 @@ import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
 import Collection from 'components/Collection';
 
-import { getCurrentScrollPos, imageLoader } from 'helpers/helpers';
-
 import { highlightsCollection } from 'data/collections';
 
 import type { NextPage } from 'next';
@@ -35,7 +33,7 @@ const Home: NextPage = () => {
           autoRefreshEvents: "visibilitychange,DOMContentLoaded,load"
         });
 
-        const vhFunc = (vh: number) => window.innerHeight * (vh / 100);
+        const vhFunc = (vh: number) => window.innerHeight * vh / 100;
 
         [1, 2, 3, 4].forEach(each => {
           const eachSelector = `.aboutTextTitle:nth-of-type(${each})`;
@@ -55,38 +53,73 @@ const Home: NextPage = () => {
           });
         })
 
-        const startingImageHeight = Math.round(window.innerWidth * .96 * 2 / 3);
-        const finalImageHeight = Math.round(Math.min(startingImageHeight * 2, window.innerHeight * .84));
-        const imageAdjustment = Math.round((finalImageHeight / 2 - startingImageHeight / 2));
+        const startingImageHeight = window.innerWidth * .96 * 2 / 3;
+        const finalImageHeight = window.innerHeight * .84;
+
+        const doBaseScale2 = startingImageHeight > finalImageHeight;
+        const finalScale = doBaseScale2 ? 2 : finalImageHeight / startingImageHeight;
+
+        const imageAdjustment = doBaseScale2 ? 0 : finalImageHeight / 2 - startingImageHeight / 2;
+        const wrapperHeight = finalImageHeight - imageAdjustment;
+
+        const navbar = document.getElementById("navbar");
+        const navbarHeight = navbar && navbar.offsetHeight ? navbar.offsetHeight : window.innerHeight * 8 / 100;
 
         ["#showcasePortrait", "#showcaseNature"].forEach(each => {
+          const eachElement = document.querySelector(each) as HTMLElement | null;
+          if (eachElement) {
+            eachElement.style.height = `${wrapperHeight}px`;
+            eachElement.style.maxHeight = `${wrapperHeight}px`;
+
+            if (doBaseScale2) {
+              eachElement.style.overflow = "hidden";
+            }
+          }
+
           const showcaseBackground = document.querySelector(`${each} .showcaseBackground`) as HTMLElement | null;
           if (showcaseBackground) {
-            showcaseBackground.style.height = (startingImageHeight) + "px";
-            showcaseBackground.style.transform = "translate(0%, 0%)";
+            showcaseBackground.style.height = `${finalImageHeight}px`;
+            showcaseBackground.style.maxHeight = `${finalImageHeight}px`;
+            showcaseBackground.style.transform = `translate(0, -${imageAdjustment}px)`;
+            showcaseBackground.style.backgroundPositionY = `${doBaseScale2 ? 30 : 50}%`;
           }
 
-          const showcaseDivider = document.querySelector(`${each}Divider`) as HTMLElement | null
-          if (showcaseDivider) {
-            showcaseDivider.style.paddingTop = imageAdjustment + "px";
-          }
+          const percentOfWrapperHeightWhereMiddleOfStartHeight = doBaseScale2
+            ? 50 * finalImageHeight / wrapperHeight
+            : 50 * startingImageHeight / wrapperHeight;
 
-          gsap.to(`${each} .showcaseBackground`, {
+          const startFunction = () => `${percentOfWrapperHeightWhereMiddleOfStartHeight}% ${vhFunc(50) + navbarHeight / 2}`;
+
+          const endFunction = () => `${vhFunc(120)} top`;
+
+          gsap.to(each, {
             scrollTrigger: {
               trigger: each,
-              start: () => "center " + vhFunc(50),
-              end: () => vhFunc(120) + " top",
+              start: startFunction,
+              end: endFunction,
               scrub: true,
               // scrub: 0.5,
               pin: true,
               pinType: "fixed",
               anticipatePin: 1,
+              // preventOverlaps: true,
+              // fastScrollEnd: true,
+              // invalidateOnRefresh: true,
               // markers: true,
             },
-            backgroundSize: "200%",
-            backgroundPositionY: "33%",
-            // height: () => finalImageHeight + "px",
-            // y: () => "-" + imageAdjustment + "px",
+          });
+
+          gsap.to(`${each} .showcaseBackground`, {
+            scrollTrigger: {
+              trigger: each,
+              start: startFunction,
+              end: endFunction,
+              scrub: true,
+              // scrub: 0.5,
+              // invalidateOnRefresh: true,
+              // markers: true,
+            },
+            scale: finalScale,
           });
         })
       }
@@ -98,22 +131,19 @@ const Home: NextPage = () => {
       }
     });
 
-    window.addEventListener("resize", (event) => {
-      const beforeReloadScrollPos = getCurrentScrollPos(window, document);
+    if (typeof window !== undefined) {
+      window.addEventListener("resize", (event) => {
+        // If width same and only height changed (fluctuating top bar on mobile, don't rerender as it messes up page position)
+        if (window.innerWidth === previousWindowSize.width && window.innerHeight !== previousWindowSize.height) {
+          return;
+        }
+  
+        unload();
+        load();
+      });
 
-      // If width same and only height changed (fluctuating top bar on mobile, don't rerender as it messes up page position)
-      if (window.innerWidth === previousWindowSize.width && window.innerHeight !== previousWindowSize.height) {
-        return;
-      }
-
-      unload();
       load();
-
-      window.scrollTo(0, beforeReloadScrollPos);
-    });
-
-
-    load();
+    }
   }, []);
 
 
@@ -132,7 +162,7 @@ const Home: NextPage = () => {
         <div id="profileDivBackground" className="containerDiv">
           <div id="profileDiv">
             <div id="resumePictureContainer">
-              <Image loader={imageLoader} src={"TEMP_LOGO.png"} width={75} height={75} />
+              <a id="profileLogoImage"></a>
             </div>
 
             <div id="profilePictureNameEmailResumeContainer">

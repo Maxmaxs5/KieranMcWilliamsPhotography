@@ -38,8 +38,12 @@ export default function Navbar() {
   return (
     <div id="navbar">
       <div id="navbarContainer">
-        <a id="navbarImage" href="#home"></a>
-        <a id="navbarName" href="#">McWilliams Photo</a>
+        <Link href="/">
+          <a id="navbarImage"></a>
+        </Link>
+        <Link href="/">
+          <a id="navbarName">McWilliams Photo</a>
+        </Link>
 
         <div id="navbarButtonsDiv">
           <Link href="/">

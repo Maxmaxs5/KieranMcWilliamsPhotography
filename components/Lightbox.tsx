@@ -2,13 +2,13 @@ import { Dispatch, MouseEvent, MouseEventHandler, SetStateAction } from 'react';
 import Image from 'next/image';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 // Fixes, see https://github.com/FortAwesome/react-fontawesome/issues/134
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false; /* eslint-disable import/first */
 
-import { gcpBaseURL, gcpBlurDirName, gcpFullDirName, gcpOptimizedDirName } from 'data/globals';
+import { gcpBaseURL, gcpBlurDirName, gcpFullDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile } from 'data/globals';
 
 import { Collection } from 'types/Collection';
 
@@ -33,7 +33,6 @@ export default function Lightbox({
   }
 
 
-  const dirName = fullResolutionSharedState ? gcpFullDirName : gcpOptimizedDirName;
   const lightboxPhoto = collection.photos[currentIndexSharedState];
   const imgFolder = isHighlights && lightboxPhoto.folder ? lightboxPhoto.folder : collection.folder;
 
@@ -96,20 +95,33 @@ export default function Lightbox({
     return <h1 id="lightboxCloseButton" onClick={handleLightboxOrCloseClick}>Close</h1>;
   }
 
+  const getImage = (webOrMobileDirName: string) => {
+    return <Image
+      onClick={cancelLightboxClose}
+      src={`${gcpBaseURL}/${imgFolder}/${fullResolutionSharedState ? gcpFullDirName : webOrMobileDirName}/${lightboxPhoto.src}`}
+      unoptimized
+      placeholder="blur"
+      blurDataURL={`${gcpBaseURL}/${imgFolder}/${gcpBlurDirName}/${lightboxPhoto.src}`}
+      layout="fill"
+      objectFit="contain"
+      objectPosition="center center"
+    />;
+  }
 
+  
   return (
     <div id="lightbox" onClick={handleLightboxOrCloseClick}>
+      <div id="loadingSpinner">
+        <FontAwesomeIcon icon={faCircleNotch} spin size="2x" />
+      </div>
+
       <div id="lightboxImageDiv">
-        <Image
-          onClick={cancelLightboxClose}
-          src={`${gcpBaseURL}/${imgFolder}/${dirName}/${lightboxPhoto.src}`}
-          unoptimized
-          placeholder="blur"
-          blurDataURL={`${gcpBaseURL}/${imgFolder}/${gcpBlurDirName}/${lightboxPhoto.src}`}
-          layout="fill"
-          objectFit="contain"
-          objectPosition="center center"
-        />
+        <div className="nextJSImageWebMobile web">
+          {getImage(gcpOptimizedDirNameWeb)}
+        </div>
+        <div className="nextJSImageWebMobile mobile">
+          {getImage(gcpOptimizedDirNameMobile)}
+        </div>
       </div>
 
       <div className="lightboxActionDiv" onClick={cancelLightboxClose}>

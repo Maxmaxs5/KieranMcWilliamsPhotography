@@ -53,7 +53,7 @@
       margin: 1.25vh 1vh;
       height: 5.5vh;
       width: 5.5vh;
-      background: url("https://storage.googleapis.com/mcwilliamsphoto/TEMP_LOGO.png");
+      background: url("https://storage.googleapis.com/mcwilliamsphoto/mcwilliams_photo_logo_square.svg");
       background-size: cover;
       
       @include m450and825landscape {
@@ -69,6 +69,7 @@
     
     #navbarName {
       width: fit-content;
+      height: 4vh;
       line-height: 4vh;
       margin: 2vh 0;
       padding: 0 2vh;
@@ -77,6 +78,7 @@
       cursor: pointer;
       display: inline-block;
       font-family: "Custom Montserrat";
+      transition: 0.3s;
       
       @include m825portrait {
         font-size: 3vh;
@@ -86,9 +88,13 @@
       }
       @include m450and825landscape {
         font-size: 4vh;
-        line-height: 8vh;
         height: 8vh;
+        line-height: 8vh;
         margin-left: 1vh;
+      }
+
+      &:hover {
+        color: var(--main-color-blue);
       }
     }
   
@@ -121,9 +127,14 @@
         cursor: pointer;
         display: inline-block;
         font-family: "Custom Montserrat";
+        transition: 0.3s;
 
         &:nth-of-type(1) {
           margin-left: 0;
+        }
+
+        &:hover {
+          color: var(--main-color-blue);
         }
   
         &.active {

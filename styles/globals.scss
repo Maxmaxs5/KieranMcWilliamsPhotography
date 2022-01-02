@@ -101,3 +101,27 @@ body, h1, h2, h3, h4 {
     background-color: var(--main-color-light);
   }
 }
+
+.nextJSImageWebMobile {
+  &.web {
+    display: unset !important;
+
+    @include m555portrait {
+      display: none !important;
+    }
+    @include m450and825landscape {
+      display: none !important;
+    }
+  }
+
+  &.mobile {
+    display: none !important;
+
+    @include m555portrait {
+      display: unset !important;
+    }
+    @include m450and825landscape {
+      display: unset !important;
+    }
+  }
+}

@@ -81,6 +81,18 @@
         @include m450and825landscape {
           display: none;
         }
+
+        & > #profileLogoImage {
+          height: 75px;
+          width: 75px;
+          background: url("https://storage.googleapis.com/mcwilliamsphoto/mcwilliams_photo_logo_square.svg");
+          background-size: cover;
+
+          @include m1100 {
+            height: 66px;
+            width: 66px;
+          }
+        }
       }
       
       #profilePictureNameEmailResumeContainer {

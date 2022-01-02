@@ -4,7 +4,7 @@ import { Collection } from "types/Collection";
 export const highlightsCollection: Collection = {
   folder: "Highlights",
   type: "People & Nature",
-  totalRows: 140,
+  totalRows: 147,
   albumPhoto: "",
   photos: [
     { src: "DSCF2941.jpg", rows: 11, cols: 11, folder: "Innocents_Society" },
@@ -79,7 +79,7 @@ export const collections: Collection[] = [
   {
     folder: "Innocents_Society",
     type: "People",
-    numPeople: 11,
+    numPeople: 13,
     totalRows: 94,
     albumPhoto: "DSCF2941",
     photos: [

@@ -1,9 +1,9 @@
 import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react';
 import Image from 'next/image';
 
-import { gcpBaseURL, gcpBlurDirName, gcpOptimizedDirName } from 'data/globals';
+import { gcpBaseURL, gcpBlurDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile } from 'data/globals';
 
-import { Collection } from 'types/Collection';
+import { Collection, CollectionPhoto } from 'types/Collection';
 
 
 export default function PhotoCollage({
@@ -19,8 +19,10 @@ export default function PhotoCollage({
 
   const photoCollageUpdates = () => {
     if (window.matchMedia("only screen and (min-width: 0px) and (max-width: 1100px)").matches) {
-      setWidthVW(96);
-    } else {
+      if (widthVW !== 96) {
+        setWidthVW(96);
+      }
+    } else if (widthVW !== 75) {
       setWidthVW(75);
     }
   }
@@ -53,6 +55,18 @@ export default function PhotoCollage({
     setCurrentIndexSharedState(index);
   }
 
+  const getImage = (imgFolder: string, each: CollectionPhoto, webOrMobileDirName: string) => {
+    return <Image
+      src={`${gcpBaseURL}/${imgFolder}/${webOrMobileDirName}/${each.src}`}
+      unoptimized
+      placeholder="blur"
+      blurDataURL={`${gcpBaseURL}/${imgFolder}/${gcpBlurDirName}/${each.src}`}
+      layout="fill"
+      objectFit="cover"
+      objectPosition="center center"
+    />;
+  }
+
 
   return (
     <div id="photoCollage" style={{
@@ -66,19 +80,19 @@ export default function PhotoCollage({
 
           return (
             <div
-              style={{gridRow: parseCollectionRowsCols(each.rows), gridColumn: parseCollectionRowsCols(each.cols)}}
+              style={{
+                gridRow: parseCollectionRowsCols(each.rows),
+                gridColumn: parseCollectionRowsCols(each.cols),
+              }}
               onClick={(e) => handleImageClick(e, index)}
               key={each.src}
             >
-              <Image
-                src={`${gcpBaseURL}/${imgFolder}/${gcpOptimizedDirName}/${each.src}`}
-                unoptimized
-                placeholder="blur"
-                blurDataURL={`${gcpBaseURL}/${imgFolder}/${gcpBlurDirName}/${each.src}`}
-                layout="fill"
-                objectFit="cover"
-                objectPosition="center center"
-              />
+              <div className="nextJSImageWebMobile web">
+                {getImage(imgFolder, each, gcpOptimizedDirNameWeb)}
+              </div>
+              <div className="nextJSImageWebMobile mobile">
+                {getImage(imgFolder, each, gcpOptimizedDirNameMobile)}
+              </div>
             </div>
           )
         })

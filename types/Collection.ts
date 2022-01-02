@@ -7,10 +7,12 @@ export interface Collection {
   numPeople?: number,
   totalRows: number,
   albumPhoto: string,
-  photos: {
-    src: string,
-    rows: number | string,
-    cols: number | string,
-    folder?: string,
-  }[],
+  photos: CollectionPhoto[],
+}
+
+export interface CollectionPhoto {
+  src: string,
+  rows: number | string,
+  cols: number | string,
+  folder?: string,
 }

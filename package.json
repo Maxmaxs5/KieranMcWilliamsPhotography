@@ -9,6 +9,8 @@
     "lint": "next lint",
     "upload": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js && npm run removeuploadJS",
     "fastupload": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js doFastUpload && npm run removeuploadJS",
+    "uploadexisting": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js uploadExisting && npm run removeuploadJS",
+    "fastuploadexisting": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js doFastUpload uploadExisting && npm run removeuploadJS",
     "removeuploadJS": "rm upload/upload.js && rm data/globals.js"
   },
   "dependencies": {

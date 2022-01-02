@@ -7,7 +7,8 @@ import {
   gcpAlbumPhotoBlurredEnding,
   gcpBlurDirName,
   gcpFullDirName,
-  gcpOptimizedDirName
+  gcpOptimizedDirNameWeb,
+  gcpOptimizedDirNameMobile
 } from "../data/globals";
 
 
@@ -32,13 +33,18 @@ import {
  * Any non-directory files in upload/photos will be ignored by both Git and this pipeline.
  * 
  * Re-running this pipeline with previously-uploaded collection folders in upload/photos will not cause any problems.
+ * 
+ * Creating the album image is done by hand using Photoshop's export for web on a custom square crop,
+ *   resized to 500x500, and should end up being under 500kb.
  */
 
-
 const doingFastUpload = process.argv.includes("doFastUpload");
+const doingUploadExisting = process.argv.includes("uploadExisting");
 
-const minFileSizeKB = 700;
-const maxFileSizeKB = 1000;
+const minFileSizeKBWeb = 700;
+const maxFileSizeKBWeb = 1000;
+const minFileSizeKBMobile = 400;
+const maxFileSizeKBMobile = 600;
 const startingSharpQuality = 50;
 const sharpQualityIncrement = 5;
 const sharpQualitySmallerIncrement = 2;
@@ -50,18 +56,50 @@ const numSharpIterations =
   (sharpQualityFarPoint) / sharpQualitySmallerIncrement;
 
 const gcpBucketName = "mcwilliamsphoto";
-const gcpDirNames = [ gcpFullDirName, gcpOptimizedDirName, gcpBlurDirName ];
+const gcpDirNames = [ gcpFullDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile, gcpBlurDirName ];
 const uploadPhotoDir = "upload/photos";
 
-// TODO: NEW LOGO
-// Note: sized to ~950x950 inner / 1750x3500 total and ~550x550 inner / 1000x2000 total
-const watermarkLogoPathLG = "upload/TEMP_LOGO_NEW_LG.png";
-const watermarkLogoPathSM = "upload/TEMP_LOGO_NEW_SM.png";
-// Note: transparent to 33/255 = ~13%
-const watermarkLogoPathLGTransparent = "upload/TEMP_LOGO_NEW_LG_TRANSPARENT.png";
-const watermarkLogoPathSMTransparent = "upload/TEMP_LOGO_NEW_SM_TRANSPARENT.png";
+const watermarkMainLogoBasePath = "upload/mcwilliams_photo_logo_watermark";
+const watermarkMainLogoPath = `${watermarkMainLogoBasePath}.png`;
+const watermarkMainLogoPathSquare = `${watermarkMainLogoBasePath}_square.png`;
+const watermarkCustomLogoBasePath = "upload/watermarks/mcwilliams_photo_logo";
+// Width of each logo type as well as short edge of Fujifilm X-S10
+const watermarkWidthPercentOfShortEdge = 3096 / 4160;
+const watermarkWidthPercentOfShortEdgeSquare = 1750 / 4160;
+
+const watermarks: {
+  [shortEdgeLength: number]: {
+    watermarkLogoPath: string;
+    watermarkLogoPathSquare: string;
+  }
+} = {
+  // Short edge for Fujifilm X-S10
+  4160: {
+    watermarkLogoPath: watermarkMainLogoPath,
+    watermarkLogoPathSquare: watermarkMainLogoPathSquare
+  }
+};
 
 const storage = new Storage();
+
+/**
+ * Returns whether or not a file is in GCP
+ * 
+ * @param gcpPath The file's GCP path
+ * @returns Whether or not the file is in GCP
+ */
+const fileIsInGCP = async (gcpPath: string) => {
+  // Baseline results in file not existing within GCP
+  let exists: boolean[] = [false];
+  
+  try {
+    exists = await storage.bucket(gcpBucketName).file(gcpPath).exists();
+  } catch (e) {
+    console.log(e);
+  }
+
+  return !exists.flat().includes(false);
+}
 
 /**
  * Uploads a file to GCP
@@ -70,103 +108,169 @@ const storage = new Storage();
  * @param gcpPath The file's to-be GCP path
  */
 const uploadFile = async(localPath: string, gcpPath: string) => {
-  if (doingFastUpload) {
-    const exists = await storage.bucket(gcpBucketName).file(gcpPath).exists();
-
-    if (!exists.flat().includes(false)) {
-      return;
-    }
+  if (doingFastUpload && await fileIsInGCP(gcpPath)) {
+    return;
   }
 
-  await storage.bucket(gcpBucketName).upload(localPath, {
-    destination: gcpPath,
-  });
+  try {
+    await storage.bucket(gcpBucketName).upload(localPath, {
+      destination: gcpPath,
+      resumable: false
+    });
+  } catch (e) {
+    console.log(e);
+  }
 
   console.log(gcpPath);
+}
+
+/**
+ * Watermarks the original full-res image, heavily blurs the original image, and uploads both
+ * 
+ * @param origLocalFilePath The local filepath for the original full-resolution image
+ * @param fullLocalFilePath The local filepath for the watermarked full-resolution image
+ * @param fullGCPFilePath The to-be GCP filepath for the watermarked full-resolution image
+ * @param blurLocalFilePath The local filepath for the to-be blur image
+ * @param blurGCPFilePath The to-be GCP filepath for the to-be blur image
+ */
+ const watermarkFullResAndBlurFullResAndUpload = async (
+  origLocalFilePath: string,
+  fullLocalFilePath: string,
+  fullGCPFilePath: string,
+  blurLocalFilePath: string,
+  blurGCPFilePath: string,
+) => {
+  if (doingFastUpload && await fileIsInGCP(fullGCPFilePath) && await fileIsInGCP(blurGCPFilePath)) {
+    return;
+  }
+
+  if (!doingUploadExisting || !fs.existsSync(fullLocalFilePath) || !fs.existsSync(blurLocalFilePath)) {
+    // Sharp the original to the watermarked full-res
+    const image = sharp(origLocalFilePath);
+    await image
+      .metadata()
+      .then(async (metadata) => {
+        if (!metadata || !metadata.height || !metadata.width) {
+          console.log(`Metadata missing for ${origLocalFilePath}, skipping.`);
+          return;
+        }
+
+        const shortEdgeLength = Math.min(metadata.height, metadata.width);
+        const watermarkInfo = await getWatermarkInfo(shortEdgeLength);
+
+        await image
+          .composite([{
+            input: watermarkInfo.watermarkLogoPath,
+            gravity: 'southeast'
+          }, {
+            input: watermarkInfo.watermarkLogoPathSquare,
+            gravity: 'centre'
+          }])
+          .jpeg({ quality: 100 })
+          .toFile(fullLocalFilePath)
+          .then(async (data) => {
+            // Sharp the original to the blurred
+            await sharp(origLocalFilePath)
+              .resize({
+                fit: sharp.fit.contain,
+                height: data.height > data.width ? 500 : undefined,
+                width: data.width > data.height ? 500 : undefined,
+              })
+              .blur()
+              .jpeg({ quality: 10 })
+              .toFile(blurLocalFilePath)
+          });
+      });
+  }
+  
+  try {
+    await uploadFile(fullLocalFilePath, fullGCPFilePath);
+    await uploadFile(blurLocalFilePath, blurGCPFilePath);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 /**
  * A recursive function that optimizes and uploads an image to be within the file size range set above
  * 
  * @param origLocalFilePath The local filepath for the original full-resolution image
- * @param fullLocalFilePath The local filepath for the watermarked full-resolution image
- * @param fullGCPFilePath The to-be GCP filepath for the watermarked full-resolution image
  * @param optimizedLocalFilePath The local filepath for the to-be optimized image
  * @param optimizedGCPFilePath The to-be GCP filepath for the to-be optimized image
- * @param blurLocalFilePath The local filepath for the to-be blur image
- * @param blurGCPFilePath The to-be GCP filepath for the to-be blur image
+ * @param minFileSizeKB The minimum file size in KB this method allows to be called "optimized" and thus uploads when in range
+ * @param maxFileSizeKB The maximum file size in KB this method allows to be called "optimized" and thus uploads when in range
  * @param quality The quality to be used by Sharp when optimizing the image
  * @param iteration The current iteration counter, ensures that this method does not infinite loop by exiting early,
  *   if unable to make it within the file size range within the set number of iterations
  */
-const optimizeAndUpload = (
+const optimizeAndUpload = async (
   origLocalFilePath: string,
-  fullLocalFilePath: string,
-  fullGCPFilePath: string,
   optimizedLocalFilePath: string,
   optimizedGCPFilePath: string,
-  blurLocalFilePath: string,
-  blurGCPFilePath: string,
+  minFileSizeKB: number,
+  maxFileSizeKB: number,
   quality = startingSharpQuality,
   iteration = 0
 ) => {
+  if (doingFastUpload && await fileIsInGCP(optimizedGCPFilePath)) {
+    return;
+  }
+
+  const runWhenDoneLooping = async () => {
+    try {
+      await uploadFile(optimizedLocalFilePath, optimizedGCPFilePath);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  if (doingUploadExisting && fs.existsSync(optimizedLocalFilePath)) {
+    await runWhenDoneLooping();
+    return;
+  }
+
   // Sharp the original to the optimized
-  sharp(origLocalFilePath)
-    .composite([{
-      input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLGTransparent : watermarkLogoPathSMTransparent,
-      gravity: 'centre'
-    }])
-    .jpeg({ quality: Math.min(Math.max(quality, 0), 100) })
-    .toFile(optimizedLocalFilePath)
-    .then((data) => {
-      const fileSizeKB = Math.round(data.size / 1024);
-      
-      if (
-        iteration > numSharpIterations
-        ||
-        (fileSizeKB >= minFileSizeKB && fileSizeKB <= maxFileSizeKB)
-      ) {
-        console.log({optimizedGCPFilePath, iteration, quality, fileSizeKB});
-
-        // Sharp the original to the blurred
-        sharp(origLocalFilePath)
-          .resize({
-            fit: sharp.fit.contain,
-            height: data.height > data.width ? 500 : undefined,
-            width: data.width > data.height ? 500 : undefined,
-          })
-          .blur()
-          .jpeg({ quality: 10 })
-          .toFile(blurLocalFilePath)
-          .then(() => {
-            // Sharp the original to the watermarked full-res
-            sharp(origLocalFilePath)
-              .composite([{
-                input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLG : watermarkLogoPathSM,
-                gravity: 'southeast'
-              }, {
-                input: origLocalFilePath.includes("DSCF") ? watermarkLogoPathLGTransparent : watermarkLogoPathSMTransparent,
-                gravity: 'centre'
-              }])
-              .jpeg({ quality: 100 })
-              .toFile(fullLocalFilePath)
-              .then(() => {
-                uploadFile(fullLocalFilePath, fullGCPFilePath).catch(console.error);
-                uploadFile(optimizedLocalFilePath, optimizedGCPFilePath).catch(console.error);
-                uploadFile(blurLocalFilePath, blurGCPFilePath).catch(console.error);
-              });
-          });
-      } else {
-        const increment = quality < 85 && quality > 15 ? sharpQualityIncrement : sharpQualitySmallerIncrement;
-
-        const newQuality = fileSizeKB < minFileSizeKB ? quality + increment : quality - increment;
-        
-        optimizeAndUpload(
-          origLocalFilePath, fullLocalFilePath, fullGCPFilePath,
-          optimizedLocalFilePath, optimizedGCPFilePath, blurLocalFilePath, blurGCPFilePath,
-          newQuality, iteration + 1
-        );
+  const image = sharp(origLocalFilePath);
+  await image
+    .metadata()
+    .then(async (metadata) => {
+      if (!metadata || !metadata.height || !metadata.width) {
+        console.log(`Metadata missing for ${origLocalFilePath}, skipping.`);
+        return;
       }
+
+      const shortEdgeLength = Math.min(metadata.height, metadata.width);
+      const watermarkInfo = await getWatermarkInfo(shortEdgeLength);
+
+      await image
+        .composite([{
+          input: watermarkInfo.watermarkLogoPathSquare,
+          gravity: 'centre'
+        }])
+        .jpeg({ quality: Math.min(Math.max(quality, 0), 100) })
+        .toFile(optimizedLocalFilePath)
+        .then(async (data) => {
+          const fileSizeKB = Math.round(data.size / 1024);
+          
+          if (
+            iteration > numSharpIterations
+            ||
+            (fileSizeKB >= minFileSizeKB && fileSizeKB <= maxFileSizeKB)
+          ) {
+            console.log({optimizedGCPFilePath, iteration, quality, fileSizeKB});
+
+            await runWhenDoneLooping();
+          } else {
+            const increment = quality < 85 && quality > 15 ? sharpQualityIncrement : sharpQualitySmallerIncrement;
+
+            const newQuality = fileSizeKB < minFileSizeKB ? quality + increment : quality - increment;
+            
+            await optimizeAndUpload(
+              origLocalFilePath, optimizedLocalFilePath, optimizedGCPFilePath,
+              minFileSizeKB, maxFileSizeKB, newQuality, iteration + 1
+            );
+          }
+        });
     });
 }
 
@@ -176,26 +280,86 @@ const optimizeAndUpload = (
  * @param albumLocalFilePath The local filepath for the custom album image
  * @param albumGCPFilePath The to-be GCP filepath for the blurred custom album image
  */
- const blurAndUploadAlbumPhoto = (
+ const blurAndUploadAlbumPhoto = async (
   albumLocalFilePath: string,
   albumGCPFilePath: string,
 ) => {
+  if (doingFastUpload && await fileIsInGCP(albumGCPFilePath)) {
+    return;
+  }
+
   const albumBlurredLocalFilePath = albumLocalFilePath.replace(gcpAlbumPhotoEnding, gcpAlbumPhotoBlurredEnding);
   const albumBlurredGCPFilePath = albumGCPFilePath.replace(gcpAlbumPhotoEnding, gcpAlbumPhotoBlurredEnding);
-    
-  // Sharp the original to the blurred
-  sharp(albumLocalFilePath)
-    .resize({
-      height: 200,
-      width: 200,
-    })
-    .blur()
-    .jpeg({ quality: 10 })
-    .toFile(albumBlurredLocalFilePath)
-    .then(() => {
-      uploadFile(albumLocalFilePath, albumGCPFilePath).catch(console.error);
-      uploadFile(albumBlurredLocalFilePath, albumBlurredGCPFilePath).catch(console.error);
-    });
+  
+  if (!doingUploadExisting || !fs.existsSync(albumBlurredLocalFilePath)) {
+    // Sharp the album photo to the blurred album photo
+    await sharp(albumLocalFilePath)
+      .resize({
+        height: 200,
+        width: 200,
+      })
+      .blur()
+      .jpeg({ quality: 10 })
+      .toFile(albumBlurredLocalFilePath);
+  }
+  
+  try {
+    await uploadFile(albumLocalFilePath, albumGCPFilePath);
+    await uploadFile(albumBlurredLocalFilePath, albumBlurredGCPFilePath);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+/**
+ * Returns, potentially after creating, a watermark specifically sized to the short edge length param
+ * 
+ * @param shortEdgeLength The short edge of the image that needs a watermark
+ * @returns The watermark info for an image of the short edge length
+ */
+const getWatermarkInfo = async (shortEdgeLength: number) => {
+  const watermarkInfo = watermarks[shortEdgeLength];
+
+  if (!watermarkInfo) {
+    const newWatermarkInfo = await createWatermarks(shortEdgeLength);
+    return newWatermarkInfo;
+  } else {
+    return watermarkInfo;
+  }
+}
+
+/**
+ * Creates then returns a watermark specifically sized to the short edge length param
+ * 
+ * @param shortEdgeLength The short edge of the image that needs a watermark
+ * @returns The watermark info for an image of the short edge length
+ */
+const createWatermarks = async (shortEdgeLength: number) => {
+  const newWatermarkInfo = {
+    watermarkLogoPath: `${watermarkCustomLogoBasePath}_${shortEdgeLength}.png`,
+    watermarkLogoPathSquare: `${watermarkCustomLogoBasePath}_square_${shortEdgeLength}.png`,
+  }
+
+  await Promise.all([
+    sharp(watermarkMainLogoPath)
+      .resize({
+        fit: sharp.fit.contain,
+        width: Math.round(shortEdgeLength * watermarkWidthPercentOfShortEdge),
+      })
+      .png({ quality: 100 })
+      .toFile(newWatermarkInfo.watermarkLogoPath)
+    ,
+    sharp(watermarkMainLogoPathSquare)
+      .resize({
+        fit: sharp.fit.contain,
+        width: Math.round(shortEdgeLength * watermarkWidthPercentOfShortEdgeSquare),
+      })
+      .png({ quality: 100 })
+      .toFile(newWatermarkInfo.watermarkLogoPathSquare)
+  ]);
+
+  watermarks[shortEdgeLength] = newWatermarkInfo;
+  return newWatermarkInfo;
 }
 
 /**
@@ -206,82 +370,98 @@ const optimizeAndUpload = (
  * @param path The path to the directory to be read and uploaded
  */
 const readDirAndUpload = async(path: string) => {
-  fs.readdir(path, (err, newCollectionFolders) => {
-    if (err) {
-      return console.log(err);
-    }
-  
-    newCollectionFolders.forEach((newCollectionFolder) => {
-      const folderFilePath = `${path}/${newCollectionFolder}`;
+  let newCollectionFolders: string[];
+  try {
+    newCollectionFolders = await fs.promises.readdir(path);
+  } catch (e) {
+    console.log(e);
+    return;
+  }
+  if (!newCollectionFolders) {
+    console.log("newCollectionFolders undefined");
+    return;
+  }
 
-      if (fs.lstatSync(folderFilePath).isDirectory()) {
-        fs.readdir(folderFilePath, (err, newFiles) => {
-          if (err) {
-            return console.log(err);
-          }
+  for (const newCollectionFolder of newCollectionFolders) {
+    const folderFilePath = `${path}/${newCollectionFolder}`;
 
-          const [ fullLocalDirPath, optimizedLocalDirPath, blurLocalDirPath ] = gcpDirNames.map(each => {
-            return `${folderFilePath}/${each}`;
-          });
-
-          [ fullLocalDirPath, optimizedLocalDirPath, blurLocalDirPath ].forEach(each => {
-            if (doingFastUpload) {
-              if (!fs.existsSync(each)) {
-                fs.mkdirSync(each);
-              }
-            } else {
-              fs.rmdirSync(each);
-              fs.mkdirSync(each);
-            }
-          })
-        
-          newFiles.forEach(async(newFile) => {
-            const filePath = `${folderFilePath}/${newFile}`;
-
-            if (!fs.lstatSync(filePath).isDirectory()) {
-              if (newFile.includes(gcpAlbumPhotoEnding)) {
-                blurAndUploadAlbumPhoto(
-                  filePath, `${newCollectionFolder}/${newFile}`,
-                )
-              } else {
-                const [ fullGCPFilePath, optimizedGCPFilePath, blurGCPFilePath ] = gcpDirNames.map(each => {
-                  return `${newCollectionFolder}/${each}/${newFile}`;
-                });
-                
-                let doUpload = true;
-                if (doingFastUpload) {
-                  const allExist = await Promise.all([
-                    fullGCPFilePath, optimizedGCPFilePath, blurGCPFilePath
-                  ].map(each => {
-                    return storage.bucket(gcpBucketName).file(each).exists();
-                  }))
-                  
-                  if (!allExist.flat().includes(false)) {
-                    doUpload = false;
-                  }
-                }
-
-                if (doUpload) {
-                  optimizeAndUpload(
-                    filePath,
-                    `${fullLocalDirPath}/${newFile}`, fullGCPFilePath,
-                    `${optimizedLocalDirPath}/${newFile}`, optimizedGCPFilePath,
-                    `${blurLocalDirPath}/${newFile}`, blurGCPFilePath
-                  );
-                }
-              }
-            } else {
-              if (!gcpDirNames.some(each => filePath.endsWith(each))) {
-                console.log(`${filePath} is not a file`);
-              }
-            }
-          });
-        });
-      } else {
-        console.log(`${folderFilePath} is not a directory`);
+    if (fs.lstatSync(folderFilePath).isDirectory()) {
+      let newFiles: string[];
+      try {
+        newFiles = await fs.promises.readdir(folderFilePath);
+      } catch (e) {
+        console.log(e);
+        return;
       }
-    });
-  })
+      if (!newFiles) {
+        console.log("newFiles undefined");
+        return;
+      }
+
+      const localDirPaths = gcpDirNames.map(each => {
+        return `${folderFilePath}/${each}`;
+      });
+
+      const [ fullLocalDirPath, optimizedLocalDirPathWeb, optimizedLocalDirPathMobile, blurLocalDirPath ] = localDirPaths;
+
+      localDirPaths.forEach(each => {
+        if (!doingFastUpload && fs.existsSync(each)) {
+          fs.rmSync(each, { recursive: true, force: true });
+        }
+
+        if (!fs.existsSync(each)) {
+          fs.mkdirSync(each);
+        }
+      });
+    
+      for (const newFile of newFiles) {
+        const filePath = `${folderFilePath}/${newFile}`;
+
+        if (!fs.lstatSync(filePath).isDirectory()) {
+          if (newFile.includes(gcpAlbumPhotoEnding)) {
+            await blurAndUploadAlbumPhoto(
+              filePath, `${newCollectionFolder}/${newFile}`,
+            );
+          } else if (!newFile.includes(gcpAlbumPhotoBlurredEnding)) {
+            const gcpFilePaths = gcpDirNames.map(each => {
+              return `${newCollectionFolder}/${each}/${newFile}`;
+            });
+
+            const [ fullGCPFilePath, optimizedGCPFilePathWeb, optimizedGCPFilePathMobile, blurGCPFilePath ] = gcpFilePaths;
+                        
+            await Promise.all([
+              // Web
+              optimizeAndUpload(
+                filePath,
+                `${optimizedLocalDirPathWeb}/${newFile}`, optimizedGCPFilePathWeb,
+                minFileSizeKBWeb, maxFileSizeKBWeb
+              ),
+              // Mobile
+              optimizeAndUpload(
+                filePath,
+                `${optimizedLocalDirPathMobile}/${newFile}`, optimizedGCPFilePathMobile,
+                minFileSizeKBMobile, maxFileSizeKBMobile
+              ),
+              // Full-Res and Blurred
+              watermarkFullResAndBlurFullResAndUpload(
+                filePath,
+                `${fullLocalDirPath}/${newFile}`, fullGCPFilePath,
+                `${blurLocalDirPath}/${newFile}`, blurGCPFilePath
+              ),
+            ]);
+          }
+        } else {
+          if (!gcpDirNames.some(each => filePath.endsWith(each))) {
+            console.log(`${filePath} is not a file`);
+          }
+        }
+      }
+    } else {
+      console.log(`${folderFilePath} is not a directory`);
+    }
+  }
+
+  console.log("DONE");
 }
 
 readDirAndUpload(uploadPhotoDir);

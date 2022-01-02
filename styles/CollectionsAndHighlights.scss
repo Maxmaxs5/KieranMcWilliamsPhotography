@@ -14,10 +14,24 @@
     h2 {
       font-size: 1.5em;
       color: white;
+      
+      @include m450 {
+        font-size: 1.3em;
+      }
+      @include m350portrait {
+        font-size: 1.1em;
+      }
     }
   
     h1 {
       font-size: 2.5em;
+      
+      @include m450 {
+        font-size: 2em;
+      }
+      @include m350portrait {
+        font-size: 1.8em;
+      }
       
       a {
         margin-left: 0.25em;
