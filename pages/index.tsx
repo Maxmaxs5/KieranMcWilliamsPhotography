@@ -27,10 +27,10 @@ const Home: NextPage = () => {
         gsap.registerPlugin(ScrollTrigger);
 
         // Because we below completely re-load on resize, we don't need to worry about it smart-refreshing itself,
-        //   at least on "resize", which we removed from the below otherwise default list,
+        //   at least on "visibilitychange"/"resize", which we removed from the below otherwise default list,
         //   this alleviates page jitter when the top bar on mobile fluctuates, resizing the page
         ScrollTrigger.config({
-          autoRefreshEvents: "visibilitychange,DOMContentLoaded,load"
+          autoRefreshEvents: "DOMContentLoaded,load"
         });
 
         const vhFunc = (vh: number) => window.innerHeight * vh / 100;
