@@ -90,10 +90,10 @@ export default function PhotoCollage({
             >
               <div>
                 {
-                  // getImage(imgFolder, each, "blur")
-                  typeof window !== "undefined"
-                    ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
-                    : null
+                  getImage(imgFolder, each, "blur")
+                  // typeof window !== "undefined"
+                  //   ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
+                  //   : null
                 }
               </div>
               {/* <div className="nextJSImageWebMobile web">
