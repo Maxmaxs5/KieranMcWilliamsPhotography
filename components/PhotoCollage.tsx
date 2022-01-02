@@ -98,26 +98,9 @@ export default function PhotoCollage({
                 {
                   typeof window !== "undefined"
                     ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobileGrid : gcpOptimizedDirNameWeb)
-                    // ? getImage(imgFolder, each, (
-                    //   windowIsMobilePortrait(window) ? gcpOptimizedDirNameMobileGrid : (
-                    //     windowIsMobileLandscape(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb
-                    //   )
-                    // ))
                     : null
-
-                  // getImage(imgFolder, each, "blur")
-
-                  // typeof window !== "undefined"
-                  //   ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
-                  //   : null
                 }
               </div>
-              {/* <div className="nextJSImageWebMobile web">
-                {getImage(imgFolder, each, gcpOptimizedDirNameWeb)}
-              </div>
-              <div className="nextJSImageWebMobile mobile">
-                {getImage(imgFolder, each, gcpOptimizedDirNameMobile)}
-              </div> */}
             </div>
           )
         })
