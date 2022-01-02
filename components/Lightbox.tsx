@@ -119,10 +119,10 @@ export default function Lightbox({
       <div id="lightboxImageDiv">
         <div>
           {
-            // getImage("blur")
-            typeof window !== "undefined"
-              ? getImage(windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
-              : null
+            getImage("blur")
+            // typeof window !== "undefined"
+            //   ? getImage(windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
+            //   : null
           }
         </div>
         {/* <div className="nextJSImageWebMobile web">
