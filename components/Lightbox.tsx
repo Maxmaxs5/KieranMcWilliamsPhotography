@@ -119,19 +119,11 @@ export default function Lightbox({
       <div id="lightboxImageDiv">
         <div>
           {
-            // getImage("blur")
-            
             typeof window !== "undefined"
               ? getImage(windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
               : null
           }
         </div>
-        {/* <div className="nextJSImageWebMobile web">
-          {getImage(gcpOptimizedDirNameWeb)}
-        </div>
-        <div className="nextJSImageWebMobile mobile">
-          {getImage(gcpOptimizedDirNameMobile)}
-        </div> */}
       </div>
 
       <div className="lightboxActionDiv" onClick={cancelLightboxClose}>
