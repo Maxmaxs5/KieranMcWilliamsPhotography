@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { gcpBaseURL, gcpBlurDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile } from 'data/globals';
 
 import { Collection, CollectionPhoto } from 'types/Collection';
+import { windowIsMobile } from 'helpers/helpers';
 
 
 export default function PhotoCollage({
@@ -87,12 +88,19 @@ export default function PhotoCollage({
               onClick={(e) => handleImageClick(e, index)}
               key={each.src}
             >
-              <div className="nextJSImageWebMobile web">
+              <div>
+                {
+                  typeof window !== "undefined"
+                    ? getImage(imgFolder, each, windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
+                    : null
+                }
+              </div>
+              {/* <div className="nextJSImageWebMobile web">
                 {getImage(imgFolder, each, gcpOptimizedDirNameWeb)}
               </div>
               <div className="nextJSImageWebMobile mobile">
                 {getImage(imgFolder, each, gcpOptimizedDirNameMobile)}
-              </div>
+              </div> */}
             </div>
           )
         })

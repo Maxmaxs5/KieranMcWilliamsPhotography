@@ -43,8 +43,8 @@ const doingUploadExisting = process.argv.includes("uploadExisting");
 
 const minFileSizeKBWeb = 700;
 const maxFileSizeKBWeb = 1000;
-const minFileSizeKBMobile = 400;
-const maxFileSizeKBMobile = 600;
+const minFileSizeKBMobile = 300;
+const maxFileSizeKBMobile = 500;
 const startingSharpQuality = 50;
 const sharpQualityIncrement = 5;
 const sharpQualitySmallerIncrement = 2;
@@ -173,8 +173,8 @@ const uploadFile = async(localPath: string, gcpPath: string) => {
             await sharp(origLocalFilePath)
               .resize({
                 fit: sharp.fit.contain,
-                height: data.height > data.width ? 500 : undefined,
-                width: data.width > data.height ? 500 : undefined,
+                height: data.height >= data.width ? 500 : undefined,
+                width: data.width >= data.height ? 500 : undefined,
               })
               .blur()
               .jpeg({ quality: 10 })
@@ -414,6 +414,7 @@ const readDirAndUpload = async(path: string) => {
         }
       });
     
+      // newFiles.forEach(async (newFile) => {
       for (const newFile of newFiles) {
         const filePath = `${folderFilePath}/${newFile}`;
 
@@ -455,6 +456,7 @@ const readDirAndUpload = async(path: string) => {
             console.log(`${filePath} is not a file`);
           }
         }
+      // });
       }
     } else {
       console.log(`${folderFilePath} is not a directory`);

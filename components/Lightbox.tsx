@@ -11,6 +11,7 @@ config.autoAddCss = false; /* eslint-disable import/first */
 import { gcpBaseURL, gcpBlurDirName, gcpFullDirName, gcpOptimizedDirNameWeb, gcpOptimizedDirNameMobile } from 'data/globals';
 
 import { Collection } from 'types/Collection';
+import { windowIsMobile } from 'helpers/helpers';
 
 
 export default function Lightbox({
@@ -108,7 +109,7 @@ export default function Lightbox({
     />;
   }
 
-  
+
   return (
     <div id="lightbox" onClick={handleLightboxOrCloseClick}>
       <div id="loadingSpinner">
@@ -116,12 +117,19 @@ export default function Lightbox({
       </div>
 
       <div id="lightboxImageDiv">
-        <div className="nextJSImageWebMobile web">
+        <div>
+          {
+            typeof window !== "undefined"
+              ? getImage(windowIsMobile(window) ? gcpOptimizedDirNameMobile : gcpOptimizedDirNameWeb)
+              : null
+          }
+        </div>
+        {/* <div className="nextJSImageWebMobile web">
           {getImage(gcpOptimizedDirNameWeb)}
         </div>
         <div className="nextJSImageWebMobile mobile">
           {getImage(gcpOptimizedDirNameMobile)}
-        </div>
+        </div> */}
       </div>
 
       <div className="lightboxActionDiv" onClick={cancelLightboxClose}>

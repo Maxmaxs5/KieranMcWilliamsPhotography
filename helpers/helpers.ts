@@ -41,15 +41,15 @@ export const getCurrentScrollPos = (window: Window & typeof globalThis, document
   }
 }
 
-// /**
-//  * Returns whether or not the window is in mobile or desktop, based on best-guess media queries
-//  * 
-//  * @param window The global window element, passed a param to ensure defined correctly in this scope
-//  * @returns A boolean representing whether the current window is in mobile (true) or desktop (false)
-//  */
-// export const windowIsMobile = (window: Window & typeof globalThis) => {
-//   const portrait = "only screen and (min-width: 0px) and (max-width: 450px) and (orientation: portrait)";
-//   const landscape = "only screen and (min-height: 0px) and (max-height: 450px) and (min-width: 0px) and (max-width: 825px) and (orientation: landscape)";
+/**
+ * Returns whether or not the window is in mobile or desktop, based on best-guess media queries
+ * 
+ * @param window The global window element, passed a param to ensure defined correctly in this scope
+ * @returns A boolean representing whether the current window is in mobile (true) or desktop (false)
+ */
+export const windowIsMobile = (window: Window & typeof globalThis) => {
+  const portrait = "only screen and (min-width: 0px) and (max-width: 450px) and (orientation: portrait)";
+  const landscape = "only screen and (min-height: 0px) and (max-height: 450px) and (min-width: 0px) and (max-width: 825px) and (orientation: landscape)";
 
-//   return (window.matchMedia(portrait).matches || window.matchMedia(landscape).matches);
-// }
+  return window.matchMedia(portrait).matches || window.matchMedia(landscape).matches;
+}
