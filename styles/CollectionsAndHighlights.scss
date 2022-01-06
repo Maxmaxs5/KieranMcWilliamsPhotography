@@ -13,8 +13,11 @@
   
     h2 {
       font-size: 1.5em;
-      color: white;
-      
+      color: var(--main-color-dark);
+
+      @include mdark {
+        color: var(--main-color-light);
+      }
       @include m450 {
         font-size: 1.3em;
       }

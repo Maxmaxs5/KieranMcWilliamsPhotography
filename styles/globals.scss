@@ -97,6 +97,9 @@ body, h1, h2, h3, h4 {
   margin: 0 0.75em;
   background-color: var(--main-color-dark);
 
+  &.alwaysLight {
+    background-color: var(--main-color-light)
+  }
   @include mdark {
     background-color: var(--main-color-light);
   }

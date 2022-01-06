@@ -129,11 +129,11 @@ export default function Lightbox({
       <div className="lightboxActionDiv" onClick={cancelLightboxClose}>
         {getFullResolutionDiv()}
 
-        <div className="verticalDivider" style={{margin: "0 .25em 0 1em"}} />
+        <div className="verticalDivider alwaysLight" style={{margin: "0 .25em 0 1em"}} />
 
         {getLeftRightButtonsAndName()}
 
-        <div className="verticalDivider" style={{margin: "0 1em 0 .25em"}} />
+        <div className="verticalDivider alwaysLight" style={{margin: "0 1em 0 .25em"}} />
 
         {getCloseButton()}
       </div>
@@ -146,7 +146,7 @@ export default function Lightbox({
         <div>
           {getFullResolutionDiv()}
 
-          <div className="verticalDivider" style={{margin: "0 1em"}} />
+          <div className="verticalDivider alwaysLight" style={{margin: "0 1em"}} />
 
           {getCloseButton()}
         </div>
