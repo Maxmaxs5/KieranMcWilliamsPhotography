@@ -20,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="description" content="Welcome to my photography website! I hope you enjoy your stay!" />
 
         <meta property="og:title" content="McWilliams Photo Website" />
-        <meta property="og:image" content="https://kieranmcwilliams.com/Kieran_McWilliams_Website_Image.png" />
+        <meta property="og:image" content="https://storage.googleapis.com/mcwilliamsphoto/mcwilliams_photo_website_image.png" />
         <meta property="og:description" content="Welcome to my photography website! I hope you enjoy your stay!" />
 
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
