@@ -113,8 +113,8 @@ export const collections: Collection[] = [
     albumPhoto: "DSCF2474",
     photos: [
       "DSCF2474.jpg",
-      "DSCF2703.jpg",
       "DSCF2566.jpg",
+      "DSCF2703.jpg",
       "DSCF2489.jpg",
       "DSCF2877.jpg",
       "DSCF2908.jpg",
