@@ -1,6 +1,5 @@
 @use "mixins";
 
-
 #bodyContainer {
   #photoAlbums {
     max-width: calc((250 + 5 * 2 + 15 * 2) * 4px);
@@ -27,7 +26,7 @@
       & > div > div > img {
         transition: 0.2s;
       }
-  
+
       & > div,
       & > div > div {
         width: 250px;
@@ -35,7 +34,7 @@
         /* background-size: cover;
         background-position: center; */
       }
-  
+
       & > h2 {
         color: var(--main-color-dark);
 
@@ -54,7 +53,6 @@
       }
     }
   }
-  
 
   #photoCollage {
     // height: 96vw;
@@ -81,7 +79,7 @@
       }
     }
   }
-  
+
   #photoCollage > div,
   #photoAlbums > div > div {
     overflow: hidden;
@@ -99,7 +97,7 @@
   }
   #photoCollage > div > div > div:hover::before,
   #photoAlbums > div > div > div > img:hover::before {
-    content: '';
+    content: "";
     height: 100%;
     width: 100%;
     position: absolute;
@@ -107,7 +105,6 @@
     left: 0%;
     background-color: rgba(0, 0, 0, 0.25);
   }
-
 
   #photoAlbumsFilter {
     display: flex;
@@ -129,7 +126,7 @@
       &:hover {
         color: var(--main-color-blue);
       }
-      
+
       &.active {
         text-decoration: underline;
         text-underline-offset: 0.1em;

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "prettier": "npx prettier --write .",
     "upload": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js && npm run removeuploadJS",
     "fastupload": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js doFastUpload && npm run removeuploadJS",
     "uploadexisting": "tsc upload/upload.ts --esModuleInterop && node upload/upload.js uploadExisting && npm run removeuploadJS",
@@ -20,6 +21,7 @@
     "@fortawesome/react-fontawesome": "^0.1.16",
     "gsap": "^3.8.0",
     "next": "11.1.2",
+    "prettier": "^2.6.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sass": "^1.43.4"

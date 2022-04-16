@@ -1,21 +1,20 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import PhotoCollage from 'components/PhotoCollage';
-import Lightbox from 'components/Lightbox';
+import PhotoCollage from "components/PhotoCollage";
+import Lightbox from "components/Lightbox";
 
-import { Collection as CollectionType } from 'types/Collection';
-
+import { Collection as CollectionType } from "types/Collection";
 
 export default function Collection({
   collection,
   isHighlights,
 }: {
-  collection: CollectionType,
-  isHighlights?: boolean,
+  collection: CollectionType;
+  isHighlights?: boolean;
 }) {
-  const [ currentIndexSharedState, setCurrentIndexSharedState ] = useState(-1);
-  const [ fullResolutionSharedState, setFullResolutionSharedState ] = useState(false);
-
+  const [currentIndexSharedState, setCurrentIndexSharedState] = useState(-1);
+  const [fullResolutionSharedState, setFullResolutionSharedState] =
+    useState(false);
 
   return (
     <>
@@ -34,5 +33,5 @@ export default function Collection({
         setCurrentIndexSharedState={setCurrentIndexSharedState}
       />
     </>
-  )
+  );
 }

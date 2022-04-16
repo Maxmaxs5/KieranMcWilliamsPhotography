@@ -1,6 +1,5 @@
 @use "mixins";
 
-
 #navbar {
   position: fixed;
   z-index: 100;
@@ -9,7 +8,7 @@
   height: 8vh;
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.25);
-  box-shadow: 0px 1px 4px rgba(0,0,0,.5);
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
   transition: 0.3s;
 
   &.scrolled {
@@ -22,7 +21,7 @@
   @include m450and825landscape {
     height: 12vh;
   }
-  
+
   a {
     text-decoration: none;
   }
@@ -55,7 +54,7 @@
       width: 5.5vh;
       background: url("https://storage.googleapis.com/mcwilliamsphoto/mcwilliams_photo_logo_square.svg");
       background-size: cover;
-      
+
       @include m450and825landscape {
         height: 8vh;
         width: 8vh;
@@ -66,7 +65,7 @@
         width: 6.5vh;
       }
     }
-    
+
     #navbarName {
       width: fit-content;
       height: 4vh;
@@ -79,7 +78,7 @@
       display: inline-block;
       font-family: "Custom Montserrat";
       transition: 0.3s;
-      
+
       @include m825portrait {
         font-size: 3vh;
       }
@@ -97,7 +96,7 @@
         color: var(--main-color-blue);
       }
     }
-  
+
     #navbarButtonsDiv {
       position: fixed;
       top: 0;
@@ -114,7 +113,7 @@
       @include m450 {
         height: 9vh;
       }
-  
+
       .navbarButton {
         width: fit-content;
         height: 4vh;
@@ -136,14 +135,14 @@
         &:hover {
           color: var(--main-color-blue);
         }
-  
+
         &.active {
           background-color: var(--main-color-blue);
-          
+
           @include mdark {
             background-color: var(--main-color-blue-dark);
           }
-        
+
           &:hover {
             color: var(--main-color-light);
           }

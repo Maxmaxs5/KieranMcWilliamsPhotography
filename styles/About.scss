@@ -1,6 +1,5 @@
 @use "mixins";
 
-
 #bodyContainer {
   #tiltedAboutDivBackground {
     z-index: 30;
@@ -12,10 +11,10 @@
     background: var(--main-color-light);
     transform: translateY(-8vh) skewY(-10deg);
     /* box-shadow: inset 0 20px 10px -10px rgba(0, 0, 0, 0.2); */
-  
+
     &::before {
       position: absolute;
-      content: '';
+      content: "";
       width: 100%;
       height: 5vh;
       left: 0;
@@ -25,7 +24,7 @@
       transform: translate(0, -50vh);
       box-shadow: 0 10px 10px 0px rgb(0, 0, 0, 0.33);
     }
-    
+
     @include m825portrait {
       transform: translateY(-17vh) skewY(-10deg);
     }
@@ -33,8 +32,7 @@
       background-color: var(--main-color-darkish);
     }
   }
-  
-  
+
   #aboutDiv {
     z-index: 40;
     padding: 0;
@@ -87,7 +85,7 @@
         margin-top: 4.5vh;
       }
     }
-    
+
     #aboutText {
       width: 65%;
       margin: auto;
@@ -95,7 +93,7 @@
       font-size: 1.1em;
       line-height: 1.7em;
       font-family: "Custom Montserrat";
-      
+
       @include m1100 {
         width: 85%;
       }

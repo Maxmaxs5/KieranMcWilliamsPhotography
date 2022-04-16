@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-import { getCurrentScrollPos } from 'helpers/helpers';
-
+import { getCurrentScrollPos } from "helpers/helpers";
 
 export default function Navbar() {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function Navbar() {
         navbar.classList.remove("scrolled");
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -29,11 +28,10 @@ export default function Navbar() {
       });
       window.addEventListener("scroll", (event) => {
         navbarUpdates();
-      })
+      });
       navbarUpdates();
     }
   });
-
 
   return (
     <div id="navbar">
@@ -47,13 +45,23 @@ export default function Navbar() {
 
         <div id="navbarButtonsDiv">
           <Link href="/">
-            <a className={`navbarButton ${router.route === "/" ? "active" : ""}`}>Home</a>
+            <a
+              className={`navbarButton ${router.route === "/" ? "active" : ""}`}
+            >
+              Home
+            </a>
           </Link>
           <Link href="/collections">
-            <a className={`navbarButton ${router.route.includes("collections") ? "active" : ""}`}>Collections</a>
+            <a
+              className={`navbarButton ${
+                router.route.includes("collections") ? "active" : ""
+              }`}
+            >
+              Collections
+            </a>
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

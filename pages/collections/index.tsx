@@ -1,7 +1,6 @@
-import type { NextPage } from 'next'
+import type { NextPage } from "next";
 
-import PhotoAlbumGrid from 'components/PhotoAlbumGrid';
-
+import PhotoAlbumGrid from "components/PhotoAlbumGrid";
 
 const CollectionsPage: NextPage = () => {
   return (
@@ -19,7 +18,7 @@ const CollectionsPage: NextPage = () => {
         <PhotoAlbumGrid isHome={false} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default CollectionsPage
+export default CollectionsPage;
