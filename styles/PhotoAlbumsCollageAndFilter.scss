@@ -67,10 +67,12 @@
       grid-gap: 2vw;
     }
 
-    & > div {
+    & > div > div {
       position: relative;
+      height: 100%;
+      width: 100%;
 
-      & > div > div {
+      & > div {
         height: 100%;
         width: 100%;
         background-size: cover;

@@ -21,12 +21,11 @@ export const folderToTitle = (folder: string) => {
  *
  * @param param0 An object with src defined (and width/quality as well, but are not really used,
  *   just pretended to be used to appease Next.js into thinking we're optimizing the image,
- *   but we simply always use the same pre-optimized version, allowing us to only need to make one custom image
+ *   but we simply always use the same pre-optimized version, allowing us to only need to make one custom image)
  * @returns The full URL for the image to be used in the Next.js Image element
  */
-export const imageLoader: ImageLoader = ({ src }) => {
-  return `${gcpBaseURL}/${src}`;
-  // return `${gcpBaseURL}/${src}?width=${width}`;
+export const imageLoader: ImageLoader = ({ src, width }) => {
+  return `${gcpBaseURL}/${src}?width=${width}`;
 };
 
 /**
