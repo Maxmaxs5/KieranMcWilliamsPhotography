@@ -15,6 +15,7 @@ export default function PhotoAlbum({ collection }: { collection: Collection }) {
     <Link href={`/collections/${collection.folder}`}>
       <div>
         <div>
+          <h1>:)</h1>
           <Image
             loader={imageLoader}
             src={`${collection.folder}/${
