@@ -48,7 +48,7 @@ export const collections: Collection[] = [
     folder: "RS_Career_Fair_Prep",
     type: "People",
     numPeople: 38,
-    totalRows: 130,
+    totalRows: 110,
     albumPhoto: "DSCF7429",
     photos: [
       "DSCF7892.jpg",
@@ -72,7 +72,7 @@ export const collections: Collection[] = [
       "DSCF8238.jpg",
       "DSCF7943.jpg",
     ].map((each) => {
-      return { src: each, rows: 13, cols: 9 };
+      return { src: each, rows: 11, cols: 9 };
     }),
   },
   {
@@ -104,6 +104,31 @@ export const collections: Collection[] = [
         return { src: each, rows: 11, cols: 9 };
       })
     ),
+  },
+  {
+    folder: "RS_Career_Fair_Prep_2",
+    type: "People",
+    numPeople: 29,
+    totalRows: 77,
+    albumPhoto: "DSCF2660",
+    photos: [
+      "DSCF2660.jpg",
+      "DSCF2510.jpg",
+      "DSCF2085.jpg",
+      "DSCF1492.jpg",
+      "DSCF2405.jpg",
+      "DSCF2432.jpg",
+      "DSCF2042.jpg",
+      "DSCF1749.jpg",
+      "DSCF1582.jpg",
+      "DSCF2277.jpg",
+      "DSCF2354.jpg",
+      "DSCF1440.jpg",
+      "DSCF2178.jpg",
+      "DSCF1650.jpg",
+    ].map((each) => {
+      return { src: each, rows: 11, cols: 9 };
+    }),
   },
   {
     folder: "Innocents_Society_3",
@@ -156,42 +181,6 @@ export const collections: Collection[] = [
     }),
   },
   {
-    folder: "RS_Internship_Highlights_3",
-    type: "People",
-    numPeople: 5,
-    totalRows: 27,
-    albumPhoto: "DSCF2134_Cropped",
-    photos: [
-      "DSCF2134_Cropped.jpg",
-      "DSCF2180_Cropped.jpg",
-      "DSCF2126_Cropped.jpg",
-      "DSCF2256_Cropped.jpg",
-      "DSCF2061_Cropped.jpg",
-    ].map((each) => {
-      return { src: each, rows: 9, cols: 9 };
-    }),
-  },
-  {
-    folder: "RS_Core_Value_Awards",
-    type: "People",
-    numPeople: 6,
-    totalRows: 45,
-    albumPhoto: "DSCF5019",
-    photos: [
-      { src: "DSCF5019.jpg", rows: 12, cols: 18 },
-    ].concat(
-      [
-        "DSCF5051.jpg",
-        "DSCF5087.jpg",
-        "DSCF5028.jpg",
-        "DSCF5041.jpg",
-        "DSCF5073.jpg",
-      ].map((each) => {
-        return { src: each, rows: 11, cols: 9 };
-      })
-    ),
-  },
-  {
     folder: "Kally_Chi_O_Reveal",
     type: "People",
     numPeople: 4,
@@ -211,26 +200,6 @@ export const collections: Collection[] = [
       { src: "DSC_4785.jpg", rows: 8, cols: 10 },
     ],
   },
-  // {
-  //   folder: "Kally_Chi_O_Reveal",
-  //   type: "People",
-  //   numPeople: 4,
-  //   totalRows: 31,
-  //   albumPhoto: "DSC_4695",
-  //   photos: [
-  //     { src: "DSC_4695.jpg", rows: 6, cols: 9 },
-  //     { src: "DSC_4590.jpg", rows: 6, cols: 4 },
-  //     { src: "DSC_4628.jpg", rows: 7, cols: 5 },
-  //     { src: "DSC_4576.jpg", rows: 7, cols: 5 },
-  //     { src: "DSC_4660.jpg", rows: "7 / span 11", cols: "6 / span 8" },
-  //     { src: "DSC_4481.jpg", rows: 8, cols: 5 },
-  //     { src: "DSC_4677.jpg", rows: 8, cols: 5 },
-  //     { src: "DSC_4553.jpg", rows: 6, cols: 8 },
-  //     { src: "DSC_4664.jpg", rows: "16 / span 8", cols: "14 / span 5" },
-  //     { src: "DSC_4743.jpg", rows: 6, cols: "1 / span 5" },
-  //     { src: "DSC_4785.jpg", rows: 8, cols: 13, },
-  //   ]
-  // },
   {
     folder: "Home_Flower_Bees",
     type: "Nature",
@@ -249,6 +218,19 @@ export const collections: Collection[] = [
     ],
   },
   {
+    folder: "California_Flowers",
+    type: "Nature",
+    totalRows: 40,
+    albumPhoto: "DSCF3686",
+    photos: [
+      { src: "DSCF3686.jpg", rows: 22, cols: 18 },
+      { src: "DSCF4062.jpg", rows: 9, cols: 11 },
+      { src: "DSCF3560.jpg", rows: 9, cols: 7 },
+      { src: "DSCF3674.jpg", rows: 9, cols: 11 },
+      { src: "DSCF3629.jpg", rows: 7, cols: 7 },
+    ],
+  },
+  {
     folder: "KC_Roses",
     type: "Nature",
     totalRows: 48,
@@ -260,6 +242,24 @@ export const collections: Collection[] = [
       { src: "DSCF5467.jpg", rows: "25 / span 12", cols: "11 / span 8" },
       { src: "DSCF5426.jpg", rows: 14, cols: 10 },
       { src: "DSCF5432.jpg", rows: "37 / span 12", cols: "11 / span 8" },
+    ],
+  },
+  {
+    folder: "Florida_Birds",
+    type: "Nature",
+    totalRows: 56,
+    albumPhoto: "DSCF0279",
+    photos: [
+      { src: "DSCF0279.jpg", rows: 16, cols: 11 },
+      { src: "DSCF6516.jpg", rows: 16, cols: 7 },
+      { src: "DSCF6496.jpg", rows: 12, cols: 18 },
+      { src: "DSCF0498.jpg", rows: 12, cols: 7 },
+      { src: "DSCF6468.jpg", rows: 7, cols: 11 },
+      { src: "DSCF7038.jpg", rows: 7, cols: 11 },
+      { src: "DSCF6876.jpg", rows: 9, cols: 7 },
+      { src: "DSCF6576.jpg", rows: 7, cols: 11 },
+      { src: "DSCF6455.jpg", rows: 7, cols: 9 },
+      { src: "DSCF6532.jpg", rows: 7, cols: 9 },
     ],
   },
   {
@@ -299,6 +299,84 @@ export const collections: Collection[] = [
       { src: "DSCF6233.jpg", rows: 12, cols: 8 },
       { src: "DSCF5687.jpg", rows: 14, cols: 10 },
     ],
+  },
+  {
+    folder: "Utah_Hiking",
+    type: "People & Nature",
+    totalRows: 72,
+    albumPhoto: "DSCF0888",
+    photos: [
+      { src: "DSCF0888.jpg", rows: 16, cols: 11 },
+      { src: "DSCF9534.jpg", rows: 16, cols: 7 },
+      { src: "DSCF8467.jpg", rows: 11, cols: 9 },
+      { src: "DSCF0653.jpg", rows: 11, cols: 9 },
+
+      { src: "DSCF7463.jpg", rows: 11, cols: 7 },
+      { src: "DSCF8268.jpg", rows: 16, cols: 11 },
+      { src: "DSCF9951.jpg", rows: 11, cols: 7 },
+      { src: "DSCF9644.jpg", rows: 16, cols: 11 },
+      { src: "DSCF0479.jpg", rows: 10, cols: 7 },
+
+      { src: "DSCF8302.jpg", rows: 13, cols: 9 },
+      { src: "DSCF8328.jpg", rows: 13, cols: 9 },
+    ],
+  },
+  {
+    folder: "RS_Internship_Highlights_3",
+    type: "People",
+    numPeople: 5,
+    totalRows: 27,
+    albumPhoto: "DSCF2134_Cropped",
+    photos: [
+      "DSCF2134_Cropped.jpg",
+      "DSCF2180_Cropped.jpg",
+      "DSCF2126_Cropped.jpg",
+      "DSCF2256_Cropped.jpg",
+      "DSCF2061_Cropped.jpg",
+    ].map((each) => {
+      return { src: each, rows: 9, cols: 9 };
+    }),
+  },
+  {
+    folder: "RS_Faculty_and_Staff",
+    type: "People",
+    numPeople: 12,
+    totalRows: 110,
+    albumPhoto: "DSCF5393",
+    photos: [
+      "DSCF5393.jpg",
+      "DSCF5501.jpg",
+      "DSCF5565.jpg",
+      "DSCF5288.jpg",
+      "DSCF5329.jpg",
+      "DSCF5321.jpg",
+      "DSCF5201.jpg",
+      "DSCF5437.jpg",
+      "DSCF5251.jpg",
+      "DSCF5124.jpg",
+    ].map((each) => {
+      return { src: each, rows: 11, cols: 9 };
+    }),
+  },
+  {
+    folder: "RS_Core_Value_Awards",
+    type: "People",
+    numPeople: 6,
+    totalRows: 45,
+    albumPhoto: "DSCF5019",
+    photos: [
+      { src: "DSCF5019.jpg", rows: 12, cols: 18 },
+    ].concat(
+      [
+        "DSCF5051.jpg",
+        "DSCF5087.jpg",
+        "DSCF5028.jpg",
+        "DSCF5041.jpg",
+        "DSCF5073.jpg",
+      ].map((each) => {
+        return { src: each, rows: 11, cols: 9 };
+      })
+    ),
   },
   {
     folder: "Nathan_and_Charlie",
@@ -361,6 +439,22 @@ export const collections: Collection[] = [
     ],
   },
   {
+    folder: "Florida_Trip",
+    type: "Nature",
+    totalRows: 42,
+    albumPhoto: "DSC_7597",
+    photos: [
+      { src: "DSC_7597.jpg", rows: 13, cols: 9 },
+      { src: "DSC_7557.jpg", rows: 13, cols: 9 },
+      { src: "DSC_7496.jpg", rows: 7, cols: 11 },
+      { src: "DSC_7200.jpg", rows: 13, cols: 7 },
+      { src: "DSC_7301.jpg", rows: 6, cols: 11 },
+      { src: "DSC_7161.jpg", rows: 7, cols: 9 },
+      { src: "DSC_7296.jpg", rows: 7, cols: 9 },
+      { src: "DSC_7378.jpg", rows: 9, cols: 14 },
+    ],
+  },
+  {
     folder: "Home_Winter_Sunset_Lake",
     type: "Nature",
     totalRows: 69,
@@ -376,22 +470,6 @@ export const collections: Collection[] = [
       { src: "DSC_6081.jpg", rows: 7, cols: 10 },
       { src: "DSC_5913.jpg", rows: 5, cols: 10 },
       { src: "DSC_5864.jpg", rows: 12, cols: 18 },
-    ],
-  },
-  {
-    folder: "Florida_Trip",
-    type: "Nature",
-    totalRows: 42,
-    albumPhoto: "DSC_7597",
-    photos: [
-      { src: "DSC_7597.jpg", rows: 13, cols: 9 },
-      { src: "DSC_7557.jpg", rows: 13, cols: 9 },
-      { src: "DSC_7496.jpg", rows: 7, cols: 11 },
-      { src: "DSC_7200.jpg", rows: 13, cols: 7 },
-      { src: "DSC_7301.jpg", rows: 6, cols: 11 },
-      { src: "DSC_7161.jpg", rows: 7, cols: 9 },
-      { src: "DSC_7296.jpg", rows: 7, cols: 9 },
-      { src: "DSC_7378.jpg", rows: 9, cols: 14 },
     ],
   },
   {
