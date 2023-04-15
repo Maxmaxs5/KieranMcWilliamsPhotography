@@ -1,3 +1,15 @@
+@mixin m2000 {
+  @media only screen and (min-width: 0px) and (max-width: 2000px) {
+    @content;
+  }
+}
+
+@mixin m1500 {
+  @media only screen and (min-width: 0px) and (max-width: 1500px) {
+    @content;
+  }
+}
+
 @mixin m1100 {
   @media only screen and (min-width: 0px) and (max-width: 1100px) {
     @content;

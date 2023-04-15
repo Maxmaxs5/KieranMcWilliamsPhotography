@@ -542,7 +542,7 @@ const readDirAndUpload = async (path: string) => {
             }
           }
         } catch (e) {
-          console.log(`ERRORED ON: ${filePath}`);
+          console.log(`\n****ERRORED ON: ${filePath}\n`);
         }
       }
       // });

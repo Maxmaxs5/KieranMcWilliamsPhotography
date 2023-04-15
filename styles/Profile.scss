@@ -229,6 +229,10 @@
           padding: 0;
           transform: translate(-50%);
 
+          @include m1500 {
+            height: 292px;
+            margin-left: 325px;
+          }
           @include m1100 {
             height: 263px;
             margin-left: 280px;

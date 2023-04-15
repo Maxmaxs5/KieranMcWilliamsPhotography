@@ -172,6 +172,26 @@ export const collections: Collection[] = [
     }),
   },
   {
+    folder: "RS_Core_Value_Awards",
+    type: "People",
+    numPeople: 6,
+    totalRows: 45,
+    albumPhoto: "DSCF5019",
+    photos: [
+      { src: "DSCF5019.jpg", rows: 12, cols: 18 },
+    ].concat(
+      [
+        "DSCF5051.jpg",
+        "DSCF5087.jpg",
+        "DSCF5028.jpg",
+        "DSCF5041.jpg",
+        "DSCF5073.jpg",
+      ].map((each) => {
+        return { src: each, rows: 11, cols: 9 };
+      })
+    ),
+  },
+  {
     folder: "Kally_Chi_O_Reveal",
     type: "People",
     numPeople: 4,
